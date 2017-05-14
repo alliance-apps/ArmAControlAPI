@@ -11,7 +11,6 @@ class VehicleController extends Controller
     {
         $vehicle = DB::table('vehicles')->where('id', $id)->get();
 
-
         $output = [];
         foreach ($vehicle as $v) {
             $output['id'] = $v->id;
@@ -30,9 +29,6 @@ class VehicleController extends Controller
             $output['damage'] = $v->damage;
             $output['insert_time'] = $v->insert_time;
         }
-
-
-
         return $output;
     }
 
@@ -41,7 +37,6 @@ class VehicleController extends Controller
         $player = DB::table('players')->where('uid', $id)->first();
         $playerid = $player->pid;
         $vehicles = DB::table('vehicles')->where('pid', $playerid)->get();
-
 
         $output = [];
         $count = 0;
@@ -63,9 +58,117 @@ class VehicleController extends Controller
             $output[$count]['insert_time'] = $v->insert_time;
             $count++;
         }
-
         return $output;
+    }
 
 
+    public function repairVehicle(Request $request, $vid)
+    {
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
+        $changed = ($vehicle->alive != 1);
+        DB::table('vehicles')->where('id', $vid)->update(['alive' => 1]);
+        $player = DB::table('players')->where('pid', $vehicle->pid)->first();
+        $playerid = $player->uid;
+
+        $toLog['vid'] = $vid;
+        $toLog['pid'] = $playerid;
+        $toLog['repaired'] = $changed;
+        return $toLog;
+    }
+
+    public function returnVehicle(Request $request, $vid)
+    {
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
+        $changed = ($vehicle->active != 0);
+        DB::table('vehicles')->where('id', $vid)->update(['active' => 0]);
+        $player = DB::table('players')->where('pid', $vehicle->pid)->first();
+        $playerid = $player->uid;
+
+        $toLog['vid'] = $vid;
+        $toLog['pid'] = $playerid;
+        $toLog['returned'] = $changed;
+        return $toLog;
+    }
+
+    public function deleteVehicle(Request $request, $vid)
+    {
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
+        DB::table('vehicles')->where('id', $vid)->update(['alive' => 0]);
+        $player = DB::table('players')->where('pid', $vehicle->pid)->first();
+        $playerid = $player->uid;
+
+        $toLog['vid'] = $vid;
+        $toLog['pid'] = $playerid;
+        return $toLog;
+    }
+
+    public function editVehicle(Request $request, $vid)
+    {
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
+        $player = DB::table('players')->where('pid', $vehicle->pid)->first();
+        $playerid = $player->uid;
+
+        $toLog['vid'] = $vid;
+        $toLog['pid'] = $playerid:
+        $toLog['fuel']['pre'] = $vehicle->fuel;
+        $toLog['fuel']['post'] = $request->fuel;
+        $toLog['inventory']['pre'] = $vehicle->inventory;
+        $toLog['inventory']['post'] = $request->inventory;
+        $toLog['gear']['pre'] = $vehicle->gear;
+        $toLog['gear']['post'] = $request->gear;
+        $toLog['color']['pre'] = $vehicle->color;
+        $toLog['color']['post'] = $request->color;
+        $toLog['damage']['pre'] = $vehicle->damage;
+        $toLog['damage']['post'] = $request->damage;
+
+
+        DB::table('vehicles')->where('id', $vid)->update([
+            'fuel' => $request->fuel,
+            'inventory' => $request->inventory,
+            'gear' => $request->gear,
+            'color' => $request->color,
+            'damage' => $request->damage,
+        ]);
+
+        return $toLog;
+    }
+
+    public function sideAndGarageChangeVehicle(Request $request, $vid)
+    {
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
+        $player = DB::table('players')->where('pid', $vehicle->pid)->first();
+        $playerid = $player->uid;
+
+        $toLog['vid'] = $vid;
+        $toLog['pid'] = $playerid:
+        $toLog['side']['pre'] = $vehicle->side;
+        $toLog['side']['post'] = $request->side;
+        $toLog['type']['pre'] = $vehicle->type;
+        $toLog['type']['post'] = $request->type;
+
+        DB::table('vehicles')->where('id', $vid)->update([
+            'side' => $request->side,
+            'type' => $request->type
+        ]);
+        return $toLog;
+    }
+
+    public function changeVehicleOwner(Request $request, $vid)
+    {
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
+        $player = DB::table('players')->where('pid', $vehicle->pid)->first();
+        $preowner = $player->uid;
+
+        $player = DB::table('players')->where('pid', $request->newowner)->first();
+        $newowner = $player->uid;
+
+        $toLog['vid'] = $vid;
+        $toLog['preowner'] = $preowner:
+        $toLog['newowner'] = $newowner;
+
+        DB::table('vehicles')->where('id', $vid)->update([
+            'pid' => $request->newowner
+        ]);
+        return $toLog;
     }
 }
