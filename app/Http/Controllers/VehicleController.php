@@ -109,7 +109,7 @@ class VehicleController extends Controller
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
-        $toLog['pid'] = $playerid:
+        $toLog['pid'] = $playerid;
         $toLog['fuel']['pre'] = $vehicle->fuel;
         $toLog['fuel']['post'] = $request->fuel;
         $toLog['inventory']['pre'] = $vehicle->inventory;
@@ -140,7 +140,7 @@ class VehicleController extends Controller
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
-        $toLog['pid'] = $playerid:
+        $toLog['pid'] = $playerid;
         $toLog['side']['pre'] = $vehicle->side;
         $toLog['side']['post'] = $request->side;
         $toLog['type']['pre'] = $vehicle->type;
@@ -163,7 +163,7 @@ class VehicleController extends Controller
         $newowner = $player->uid;
 
         $toLog['vid'] = $vid;
-        $toLog['preowner'] = $preowner:
+        $toLog['preowner'] = $preowner;
         $toLog['newowner'] = $newowner;
 
         DB::table('vehicles')->where('id', $vid)->update([
