@@ -34,9 +34,9 @@ Route::get('player/{uid}', 'GETController@getPlayer');
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
 Route::get('vehicle/list/{id}', 'VehicleController@listForPlayer');
 
-Route::post('vehicle/{vid}/repair', 'VehicleController@repairVehicle');
-Route::post('vehicle/{vid}/return', 'VehicleController@returnVehicle');
+Route::patch('vehicle/{vid}', 'VehicleController@repairVehicle');
+Route::patch('vehicle/{vid}/return', 'VehicleController@returnVehicle');
 Route::delete('vehicle/{vid}', 'VehicleController@deleteVehicle');
-Route::post('vehicle/{vid}/edit', 'VehicleController@editVehicle');
-Route::post('vehicle/{vid}/sidegarage', 'VehicleController@sideAndGarageChangeVehicle');
-Route::post('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner');
+Route::patch('vehicle/{vid}/edit', 'VehicleController@editVehicle');
+Route::patch('vehicle/{vid}/sidegarage', 'VehicleController@sideAndGarageChangeVehicle');
+Route::patch('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner');
