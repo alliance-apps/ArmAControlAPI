@@ -92,7 +92,7 @@ class VehicleController extends Controller
 
     public function deleteVehicle($vid)
     {
-        DB::table('vehicles')->where('id', $vid)->update(['alive' => 0])->save();
+        DB::table('vehicles')->where('id', $vid)->update(['alive' => 0]);
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $player = DB::table('players')->where('pid', $vehicle->pid)->first();
         $playerid = $player->uid;
