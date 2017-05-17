@@ -62,7 +62,7 @@ class VehicleController extends Controller
     }
 
 
-    public function repairVehicle(Request $request, $vid)
+    public function repairVehicle($vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $changed = ($vehicle->alive != 1);
@@ -76,7 +76,7 @@ class VehicleController extends Controller
         return $toLog;
     }
 
-    public function returnVehicle(Request $request, $vid)
+    public function returnVehicle($vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $changed = ($vehicle->active != 0);
@@ -90,7 +90,7 @@ class VehicleController extends Controller
         return $toLog;
     }
 
-    public function deleteVehicle(Request $request, $vid)
+    public function deleteVehicle($vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         DB::table('vehicles')->where('id', $vid)->update(['alive' => 0]);
