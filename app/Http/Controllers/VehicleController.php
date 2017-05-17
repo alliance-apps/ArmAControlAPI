@@ -159,8 +159,8 @@ class VehicleController extends Controller
         $player = DB::table('players')->where('pid', $vehicle->pid)->first();
         $preowner = $player->uid;
 
-        $player = DB::table('players')->where('pid', $request->newowner)->first();
-        $newowner = $player->uid;
+        $player2 = DB::table('players')->where('pid', $request->newowner)->first();
+        $newowner = $player2->uid;
 
         $toLog['vid'] = $vid;
         $toLog['preowner'] = $preowner;
