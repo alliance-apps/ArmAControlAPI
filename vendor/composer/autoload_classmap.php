@@ -2155,6 +2155,7 @@ return array(
     'Psy\\CodeCleaner\\InstanceOfPass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/InstanceOfPass.php',
     'Psy\\CodeCleaner\\LeavePsyshAlonePass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/LeavePsyshAlonePass.php',
     'Psy\\CodeCleaner\\LegacyEmptyPass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/LegacyEmptyPass.php',
+    'Psy\\CodeCleaner\\LoopContextPass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/LoopContextPass.php',
     'Psy\\CodeCleaner\\MagicConstantsPass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/MagicConstantsPass.php',
     'Psy\\CodeCleaner\\NamespaceAwarePass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/NamespaceAwarePass.php',
     'Psy\\CodeCleaner\\NamespacePass' => $vendorDir . '/psy/psysh/src/Psy/CodeCleaner/NamespacePass.php',

@@ -62,7 +62,7 @@ class VehicleController extends Controller
     }
 
 
-    public function repairVehicle(Request $request, $vid)
+    public function repairVehicle($vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $changed = ($vehicle->alive != 1);
@@ -76,7 +76,7 @@ class VehicleController extends Controller
         return $toLog;
     }
 
-    public function returnVehicle(Request $request, $vid)
+    public function returnVehicle($vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $changed = ($vehicle->active != 0);
@@ -90,10 +90,10 @@ class VehicleController extends Controller
         return $toLog;
     }
 
-    public function deleteVehicle(Request $request, $vid)
+    public function deleteVehicle($vid)
     {
-        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         DB::table('vehicles')->where('id', $vid)->update(['alive' => 0]);
+        $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $player = DB::table('players')->where('pid', $vehicle->pid)->first();
         $playerid = $player->uid;
 
@@ -109,7 +109,7 @@ class VehicleController extends Controller
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
-        $toLog['pid'] = $playerid:
+        $toLog['pid'] = $playerid;
         $toLog['fuel']['pre'] = $vehicle->fuel;
         $toLog['fuel']['post'] = $request->fuel;
         $toLog['inventory']['pre'] = $vehicle->inventory;
@@ -140,7 +140,7 @@ class VehicleController extends Controller
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
-        $toLog['pid'] = $playerid:
+        $toLog['pid'] = $playerid;
         $toLog['side']['pre'] = $vehicle->side;
         $toLog['side']['post'] = $request->side;
         $toLog['type']['pre'] = $vehicle->type;
@@ -159,11 +159,11 @@ class VehicleController extends Controller
         $player = DB::table('players')->where('pid', $vehicle->pid)->first();
         $preowner = $player->uid;
 
-        $player = DB::table('players')->where('pid', $request->newowner)->first();
-        $newowner = $player->uid;
+        $player2 = DB::table('players')->where('pid', $request->newowner)->first();
+        $newowner = $player2->uid;
 
         $toLog['vid'] = $vid;
-        $toLog['preowner'] = $preowner:
+        $toLog['preowner'] = $preowner;
         $toLog['newowner'] = $newowner;
 
         DB::table('vehicles')->where('id', $vid)->update([

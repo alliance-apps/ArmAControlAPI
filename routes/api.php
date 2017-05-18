@@ -33,3 +33,10 @@ Route::get('player/{uid}', 'GETController@getPlayer');
 
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
 Route::get('vehicle/list/{id}', 'VehicleController@listForPlayer');
+
+Route::patch('vehicle/{vid}', 'VehicleController@repairVehicle');
+Route::patch('vehicle/{vid}/return', 'VehicleController@returnVehicle');
+Route::delete('vehicle/{vid}', 'VehicleController@deleteVehicle');
+Route::patch('vehicle/{vid}/edit', 'VehicleController@editVehicle');
+Route::patch('vehicle/{vid}/sidegarage', 'VehicleController@sideAndGarageChangeVehicle');
+Route::patch('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner');
