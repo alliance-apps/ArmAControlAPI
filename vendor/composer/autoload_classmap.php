@@ -14,7 +14,7 @@ return array(
     'App\\Http\\Controllers\\Auth\\ResetPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ResetPasswordController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\GETController' => $baseDir . '/app/Http/Controllers/GETController.php',
-    'App\\Http\\Controllers\\PlayerProfileController' => $baseDir . '/app/Http/Controllers/PlayerProfileController.php',
+    'App\\Http\\Controllers\\PlayerController' => $baseDir . '/app/Http/Controllers/PlayerProfileController.php',
     'App\\Http\\Controllers\\VehicleController' => $baseDir . '/app/Http/Controllers/VehicleController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',

@@ -13,27 +13,23 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('version', 'GETController@version');
+Route::get('version', 'PlayerController@version');
 
 //Player
-Route::get('player', 'GETController@getPlayer');
-Route::get('players/light', 'GETController@getPlayersLight');
-Route::get('players/complete', 'GETController@getPlayersComplete');
-Route::get('players/moneysum', 'GETController@getMoneySum');
-Route::get('players/possiblelevels', 'GETController@getPossibleLevels');
+Route::get('player', 'PlayerController@getPlayer');
+Route::get('players/light', 'PlayerController@getPlayersLight');
+Route::get('players/complete', 'PlayerController@getPlayersComplete');
+Route::get('players/moneysum', 'PlayerController@getMoneySum');
+Route::get('players/possiblelevels', 'PlayerController@getPossibleLevels');
+Route::get('player/{uid}', 'PlayerController@getPlayer');
+Route::post('updateplayer/gear/{uid}', 'PlayerController@editPlayerGear');
+Route::post('updateplayer/level/{uid}', 'PlayerController@editPlayerLevel');
+Route::post('updateplayer/licenses/{uid}', 'PlayerController@editPlayerLicenses');
+Route::post('updateplayer/money/{uid}', 'PlayerController@editPlayerMoney');
 
-Route::post('updateplayer/gear/{uid}', 'PlayerProfileController@editPlayerGear');
-Route::post('updateplayer/level/{uid}', 'PlayerProfileController@editPlayerLevel');
-Route::post('updateplayer/licenses/{uid}', 'PlayerProfileController@editPlayerLicenses');
-Route::post('updateplayer/money/{uid}', 'PlayerProfileController@editPlayerMoney');
-
-
-Route::get('player/{uid}', 'GETController@getPlayer');
-
-
+//Vehicle
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
 Route::get('vehicle/list/{id}', 'VehicleController@listForPlayer');
-
 Route::patch('vehicle/{vid}', 'VehicleController@repairVehicle');
 Route::patch('vehicle/{vid}/return', 'VehicleController@returnVehicle');
 Route::delete('vehicle/{vid}', 'VehicleController@deleteVehicle');
