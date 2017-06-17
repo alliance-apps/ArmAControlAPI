@@ -29,6 +29,7 @@ Route::post('updateplayer/money/{uid}', 'PlayerController@editPlayerMoney');
 
 //Vehicle
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
+Route::get('vehicle/list', 'VehicleController@listAll');
 Route::get('vehicle/list/{id}', 'VehicleController@listForPlayer');
 Route::patch('vehicle/{vid}', 'VehicleController@repairVehicle');
 Route::patch('vehicle/{vid}/return', 'VehicleController@returnVehicle');

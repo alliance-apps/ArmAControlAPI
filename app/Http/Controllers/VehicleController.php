@@ -32,6 +32,35 @@ class VehicleController extends Controller
         return $output;
     }
 
+
+    public function listAll()
+    {
+        $vehicles = DB::table('vehicles')->get();
+
+        $output = [];
+        $count = 0;
+        foreach ($vehicles as $v) {
+            $output[$count]['id'] = $v->id;
+            $output[$count]['side'] = $v->side;
+            $output[$count]['class'] = $v->classname;
+            $output[$count]['type'] = $v->type;
+            $output[$count]['pid'] = $v->pid;
+            $output[$count]['alive'] = $v->alive;
+            $output[$count]['blacklist'] = $v->blacklist;
+            $output[$count]['active'] = $v->active;
+            $output[$count]['plate'] = $v->plate;
+            $output[$count]['color'] = $v->color;
+            $output[$count]['inventory'] = $v->inventory;
+            $output[$count]['gear'] = $v->gear;
+            $output[$count]['fuel'] = $v->fuel;
+            $output[$count]['damage'] = $v->damage;
+            $output[$count]['insert_time'] = $v->insert_time;
+            $count++;
+        }
+        return $output;
+    }
+
+
     public function listForPlayer($id)
     {
         $player = DB::table('players')->where('uid', $id)->first();
@@ -116,18 +145,36 @@ class VehicleController extends Controller
         $toLog['inventory']['post'] = $request->inventory;
         $toLog['gear']['pre'] = $vehicle->gear;
         $toLog['gear']['post'] = $request->gear;
+        /*
         $toLog['color']['pre'] = $vehicle->color;
         $toLog['color']['post'] = $request->color;
         $toLog['damage']['pre'] = $vehicle->damage;
         $toLog['damage']['post'] = $request->damage;
+        */
 
+        if ($vehicle->fuel == $request->fuel)
+        {
+            $toLog['fuel']['changed'] = false;
+        } else {
+            $toLog['fuel']['changed'] = true;
+        }
+        if ($vehicle->inventory == $request->inventory)
+        {
+            $toLog['inventory']['changed'] = false;
+        } else {
+            $toLog['inventory']['changed'] = true;
+        }
+        if ($vehicle->gear == $request->gear)
+        {
+            $toLog['gear']['changed'] = false;
+        } else {
+            $toLog['gear']['changed'] = true;
+        }
 
         DB::table('vehicles')->where('id', $vid)->update([
             'fuel' => $request->fuel,
             'inventory' => $request->inventory,
             'gear' => $request->gear,
-            'color' => $request->color,
-            'damage' => $request->damage,
         ]);
 
         return $toLog;
