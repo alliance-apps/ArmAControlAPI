@@ -259,6 +259,7 @@ class PlayerController extends Controller
             $output[$count]['cop_licenses_string'] = $player->cop_licenses;
             $output[$count]['med_licenses_string'] = $player->med_licenses;
             $output[$count]['opfor_licenses_string'] = null;
+            $output[$count]['newgear'] = env('NEW_GEAR', false);
             $output[$count]['civ_gear'] = $player->civ_gear;
             $output[$count]['cop_gear'] = $player->cop_gear;
             $output[$count]['med_gear'] = $player->med_gear;
