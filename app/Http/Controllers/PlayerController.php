@@ -92,7 +92,7 @@ class PlayerController extends Controller
 
     public function version()
     {
-        return "1.0.1";
+        return "1.1";
     }
 
     public function getPlayersLight(Request $request)
@@ -144,9 +144,9 @@ class PlayerController extends Controller
             $playtime = str_replace('"[', '', $player->playtime);
             $playtime = str_replace(']"', '', $playtime);
             $playtime = explode(',', $playtime);
-            $output[$count]['playtime']['civ'] = intval($playtime[0]);
-            $output[$count]['playtime']['cop'] = intval($playtime[1]);
-            $output[$count]['playtime']['med'] = intval($playtime[2]);
+            $output[$count]['playtime']['civ'] = intval($playtime[2]);
+            $output[$count]['playtime']['cop'] = intval($playtime[0]);
+            $output[$count]['playtime']['med'] = intval($playtime[1]);
             $output[$count]['insert_time'] = $player->insert_time;
             $output[$count]['last_seen'] = $player->last_seen;
             $count++;
@@ -181,9 +181,9 @@ class PlayerController extends Controller
             $playtime = str_replace('"[', '', $player->playtime);
             $playtime = str_replace(']"', '', $playtime);
             $playtime = explode(',', $playtime);
-            $output[$count]['playtime']['civ'] = intval($playtime[0]);
-            $output[$count]['playtime']['cop'] = intval($playtime[1]);
-            $output[$count]['playtime']['med'] = intval($playtime[2]);
+            $output[$count]['playtime']['civ'] = intval($playtime[2]);
+            $output[$count]['playtime']['cop'] = intval($playtime[0]);
+            $output[$count]['playtime']['med'] = intval($playtime[1]);
             $output[$count]['civ_licenses'] = $this->convertLicenseMREStoArray($player->civ_licenses);
             $output[$count]['cop_licenses'] = $this->convertLicenseMREStoArray($player->cop_licenses);
             $output[$count]['med_licenses'] = $this->convertLicenseMREStoArray($player->med_licenses);
@@ -248,9 +248,9 @@ class PlayerController extends Controller
             $playtime = str_replace('"[', '', $player->playtime);
             $playtime = str_replace(']"', '', $playtime);
             $playtime = explode(',', $playtime);
-            $output[$count]['playtime']['civ'] = intval($playtime[0]);
-            $output[$count]['playtime']['cop'] = intval($playtime[1]);
-            $output[$count]['playtime']['med'] = intval($playtime[2]);
+            $output[$count]['playtime']['civ'] = intval($playtime[2]);
+            $output[$count]['playtime']['cop'] = intval($playtime[0]);
+            $output[$count]['playtime']['med'] = intval($playtime[1]);
             $output[$count]['civ_licenses'] = $this->convertLicenseMREStoArray($player->civ_licenses);
             $output[$count]['cop_licenses'] = $this->convertLicenseMREStoArray($player->cop_licenses);
             $output[$count]['med_licenses'] = $this->convertLicenseMREStoArray($player->med_licenses);

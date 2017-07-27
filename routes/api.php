@@ -37,3 +37,17 @@ Route::delete('vehicle/{vid}', 'VehicleController@deleteVehicle');
 Route::patch('vehicle/{vid}/edit', 'VehicleController@editVehicle');
 Route::patch('vehicle/{vid}/sidegarage', 'VehicleController@sideAndGarageChangeVehicle');
 Route::patch('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner');
+
+Route::get('gang/list', 'GangController@ganglist');
+Route::get('gang/{id}', 'GangController@gang');
+Route::delete('gang/{id}', 'GangController@deleteMember');
+Route::patch('gang/{id}/owner', 'GangController@changeOwner');
+Route::patch('gang/{id}/name', 'GangController@changeName');
+Route::patch('gang/{id}/other', 'GangController@changeOther');
+
+Route::get('wanted/list', 'WantedController@wantedlist');
+Route::get('wanted/{pid}', 'WantedController@wantedlistForPlayer');
+
+Route::get('house/list', 'HouseController@houselist');
+Route::get('houses/{pid}', 'HouseController@houselistForPlayer');
+Route::get('house/{id}', 'HouseController@house');
