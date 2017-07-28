@@ -20,6 +20,24 @@ class GangController extends Controller
         return $licensearray;
     }
 
+    function getGangMemberNames($members)
+    {
+        $giveback = [];
+        $count = 0;
+        foreach ($members as $member)
+        {
+            $player = DB::table('players')->where('pid', $member)->first();
+            if (is_null($player))
+            {
+                $giveback[$count] = "ERRROR NO PLAYER";
+            } else {
+                $giveback[$count] = $player->name;
+            }
+            $count++;
+        }
+        return $giveback;
+    }
+
 
 
     public function ganglist()
@@ -37,6 +55,7 @@ class GangController extends Controller
             $output[$count]['active'] = $gang->active;
             $output[$count]['created_at'] = $gang->insert_time;
             $output[$count]['members'] = $this->convertLicenseMREStoArray($gang->members);
+            $output[$count]['membersNames'] = $this->getGangMemberNames($output[$count]['members']);
 
             $count++;
         }
