@@ -544,4 +544,25 @@ class PlayerController extends Controller
 
     }
 
+    public function editOtherData(Request $request, $uid)
+    {
+        $players = DB::table('players')->where('uid', $uid)->take(1)->get();
+        foreach ($players as $p)
+        {
+            $player = $p;
+            $preName = $p->name;
+        }
+        DB::table('players')->where('uid', $uid)->update(['name' => $request->name]);
+
+        $toLog['name']['pre'] = $preName;
+        $toLog['name']['post'] = $request->name;
+        if ($toLog['name']['pre'] == $toLog['name']['post'])
+        {
+            $toLog['name']['changed'] = false;
+        } else {
+            $toLog['name']['changed'] = true;
+        }
+        return $toLog;
+    }
+
 }

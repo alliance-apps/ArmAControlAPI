@@ -26,6 +26,7 @@ Route::post('updateplayer/gear/{uid}', 'PlayerController@editPlayerGear');
 Route::post('updateplayer/level/{uid}', 'PlayerController@editPlayerLevel');
 Route::post('updateplayer/licenses/{uid}', 'PlayerController@editPlayerLicenses');
 Route::post('updateplayer/money/{uid}', 'PlayerController@editPlayerMoney');
+Route::patch('updateplayer/otherdata/{uid}', 'PlayerController@editOtherData');
 
 //Vehicle
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
