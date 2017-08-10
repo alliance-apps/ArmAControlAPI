@@ -120,6 +120,46 @@ class GangController extends Controller
         return $return;
     }
 
+    public function addMember($id, Request $request)
+    {
+        $gangs = DB::table('gangs')->where('id', $id)->get();
+        foreach ($gangs as $gang)
+        {
+            $output['id'] = $gang->id;
+            $output['owner'] = $gang->owner;
+            $output['name'] = $gang->name;
+            $output['maxmembers'] = $gang->maxmembers;
+            $output['bank'] = $gang->bank;
+            $output['active'] = $gang->active;
+            $output['created_at'] = $gang->insert_time;
+            $output['members'] = $this->convertLicenseMREStoArray($gang->members);
+        }
+        $return['error'] = true;
+
+        if (!isset($request->pid)) return $return;
+        if ($output['owner'] == $request->pid) return $return;
+
+        $memberstring = '"[';
+
+        foreach ($output['members'] as $member)
+        {
+            if ($member == $request->pid) return $return;
+            if ($memberstring == '"[')
+            {
+                $memberstring .= '`'.$member.'`';
+            } else {
+                $memberstring .= ',`'.$member.'`';
+            }
+        }
+        $memberstring .= ',`'.$request->pid.'`';
+        $memberstring .= ']"';
+        $return['error'] = false;
+        $return['gang'] = $id;
+        $return['added_player'] = $request->pid;
+        DB::table('gangs')->where('id', $id)->update(['members' => $memberstring]);
+        return $return;
+    }
+
     public function changeOwner($id, Request $request)
     {
         $gangs = DB::table('gangs')->where('id', $id)->get();

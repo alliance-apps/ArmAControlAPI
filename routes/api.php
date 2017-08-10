@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::get('version', 'PlayerController@version');
+Route::get('dashboardstats', 'PlayerController@getDashboardStats');
 
 //Player
 Route::get('player', 'PlayerController@getPlayer');
@@ -27,6 +28,14 @@ Route::post('updateplayer/level/{uid}', 'PlayerController@editPlayerLevel');
 Route::post('updateplayer/licenses/{uid}', 'PlayerController@editPlayerLicenses');
 Route::post('updateplayer/money/{uid}', 'PlayerController@editPlayerMoney');
 Route::patch('updateplayer/otherdata/{uid}', 'PlayerController@editOtherData');
+
+Route::get('player/{uid}/customfields', 'PlayerController@getCustomFields');
+Route::patch('player/{uid}/customfields', 'PlayerController@changeCustomFields');
+
+
+
+
+
 
 //Vehicle
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
@@ -42,13 +51,17 @@ Route::patch('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner'
 Route::get('gang/list', 'GangController@ganglist');
 Route::get('gang/{id}', 'GangController@gang');
 Route::delete('gang/{id}', 'GangController@deleteMember');
+Route::put('gang/{id}', 'GangController@addMember');
 Route::patch('gang/{id}/owner', 'GangController@changeOwner');
 Route::patch('gang/{id}/name', 'GangController@changeName');
 Route::patch('gang/{id}/other', 'GangController@changeOther');
 
 Route::get('wanted/list', 'WantedController@wantedlist');
 Route::get('wanted/{pid}', 'WantedController@wantedlistForPlayer');
+Route::delete('wanted/{pid}', 'WantedController@deletePlayerWanted');
 
 Route::get('house/list', 'HouseController@houselist');
 Route::get('houses/{pid}', 'HouseController@houselistForPlayer');
 Route::get('house/{id}', 'HouseController@house');
+
+Route::get('allianceapps/locker/list', 'AALockerController@lockerList');

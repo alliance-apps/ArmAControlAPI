@@ -60,4 +60,12 @@ class WantedController extends Controller
         $output['crimes'] = $this->convertLicenseMREStoArray($wanted->wantedCrimes);
         return $output;
     }
+
+    public function deletePlayerWanted(Request $request)
+    {
+        $wanted = DB::table('wanted')->where('wantedID', $request->pid)->first();
+        $output['pid'] = $request->pid;
+        $output['bounty'] = $wanted->wantedBounty;
+        $wanted->delete();
+    }
 }

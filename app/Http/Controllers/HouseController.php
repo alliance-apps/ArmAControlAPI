@@ -109,6 +109,15 @@ class HouseController extends Controller
             $pos = str_replace(']', '', $pos);
             $pos = explode(',', $pos);
             $output['containers'][$count]['pos'] = $pos;
+            $output['containers'][$count]['inventory'] = $container->inventory;
+            $output['containers'][$count]['gear'] = $container->gear;
+
+            $dir = $container->dir;
+            $dir = str_replace('[', '', $dir);
+            $dir = str_replace(']', '', $dir);
+            $dir = explode(',', $dir);
+
+            $output['containers'][$count]['dir'] = $dir;
             $output['containers'][$count]['owned'] = intval($container->owned);
             $output['containers'][$count]['active'] = intval($container->active);
             $output['containers'][$count]['created_at'] = $container->insert_time;
