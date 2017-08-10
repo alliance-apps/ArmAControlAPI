@@ -245,7 +245,7 @@ class PlayerController extends Controller
     {
         if(strlen($uid) == 17 && ctype_digit($uid))
         {
-            $player = DB::table('players')->where('pid', $uid)->take(1)->get();
+            $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $uid)->take(1)->get();
         }
         else {
             $player = DB::table('players')->where('uid', $uid)->take(1)->get();
