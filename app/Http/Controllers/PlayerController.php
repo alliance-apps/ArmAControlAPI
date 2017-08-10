@@ -302,6 +302,7 @@ class PlayerController extends Controller
             }
 
             $output[$count]['opforlevel']['enabled'] = env('TABLE_PLAYERS_OPFOR_ENABLED', false);
+            $output[$count]['opforlevel'] = 0;
             if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
             {
                 $opfor = env('TABLE_PLAYERS_OPFOR');
