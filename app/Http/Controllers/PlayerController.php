@@ -376,15 +376,6 @@ class PlayerController extends Controller
         $output['cops'] = DB::table('players')->where('coplevel', '>=', 1)->count();
         $output['last7days'] = DB::table('players')->where('insert_time', '>=', Carbon::now()->subWeek())->get()->count();
         $output['last24hours'] = DB::table('players')->where('insert_time', '>=', Carbon::now()->subDay())->get()->count();
-        for ($i = 0; $i <= 30; $i++) {
-            $datestring = Carbon::now()->subdays($i)->toDateString();
-            $val = DB::table('players')->where(DB::raw('date(insert_time)'), $datestring)->get()->count();
-            $val1 = DB::table('players')->where(DB::raw('date(insert_time)'), Carbon::now()->subdays($i)->toDateString())->where(DB::raw('date(last_seen)'), Carbon::now()->subdays($i)->toDateString())->get()->count();
-            $output['last30days'][$i][0] = $val;
-            $output['last30days'][$i][1] = $val1;
-            $output['last30days'][$i][2] = $datestring;
-        }
-
         $output['activelast48hours'] = DB::table('players')->where('last_seen', '>=', Carbon::now()->subDays(2))->get()->count();
         $output['activelast4hours'] = DB::table('players')->where('last_seen', '>=', Carbon::now()->subHours(4))->get()->count();
         $output['vehicles'] = DB::table('vehicles')->count();
@@ -404,7 +395,18 @@ class PlayerController extends Controller
         return $output;
 
     }
-
+    public function getlast30days() {
+        $output = [];
+        for ($i = 0; $i <= 30; $i++) {
+            $datestring = Carbon::now()->subdays($i)->toDateString();
+            $val = DB::table('players')->where(DB::raw('date(insert_time)'), $datestring)->get()->count();
+            $val1 = DB::table('players')->where(DB::raw('date(insert_time)'), Carbon::now()->subdays($i)->toDateString())->where(DB::raw('date(last_seen)'),'>', DB::raw('date(insert_time)'))->get()->count();
+            $output[$i][1] = $val;
+            $output[$i][0] = $val1;
+            $output[$i][2] = $datestring;
+        }
+        return $output;
+    }
     public function getPossibleLevels()
     {
         $type = DB::select("SHOW COLUMNS FROM players WHERE Field = 'coplevel'")[0]->Type;

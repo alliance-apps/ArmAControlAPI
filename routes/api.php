@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::get('version', 'PlayerController@version');
 Route::get('dashboardstats', 'PlayerController@getDashboardStats');
+Route::get('dashboard/last30days', 'PlayerController@getlast30days');
 
 //Player
 Route::get('player', 'PlayerController@getPlayer');
