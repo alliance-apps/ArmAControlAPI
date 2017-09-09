@@ -29,6 +29,7 @@ Route::post('updateplayer/level/{uid}', 'PlayerController@editPlayerLevel');
 Route::post('updateplayer/licenses/{uid}', 'PlayerController@editPlayerLicenses');
 Route::post('updateplayer/money/{uid}', 'PlayerController@editPlayerMoney');
 Route::patch('updateplayer/otherdata/{uid}', 'PlayerController@editOtherData');
+Route::patch('updateplayer/wipe/{uid}', 'PlayerController@wipePlayer');
 
 Route::get('player/{uid}/customfields', 'PlayerController@getCustomFields');
 Route::patch('player/{uid}/customfields', 'PlayerController@changeCustomFields');
