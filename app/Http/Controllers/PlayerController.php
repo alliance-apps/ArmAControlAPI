@@ -99,6 +99,7 @@ class PlayerController extends Controller
     public function getPlayersLight(Request $request)
     {
         $type = $request->type;
+        if (is_null($type)) $type = "all";
         if($type == "all")
         {
             $players = DB::table('players')->get();
