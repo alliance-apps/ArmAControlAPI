@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Mockery\Exception;
 
 class PlayerController extends Controller
 {
@@ -392,10 +393,96 @@ class PlayerController extends Controller
         $output['containers'] = DB::table('containers')->count();
         $output['totalBounty'] = intval(DB::table('wanted')->sum('wantedBounty'));
         $output['time'] = round((microtime(true) - $start) * 1000);
-
         return $output;
-
     }
+
+    public function wipePlayer(Request $request, $uid) {
+        $output['status'] = false;
+        $type = $request['type'];
+        $bank = $request['bank'];
+        $pid = DB::table('players')->select(env('TABLE_PLAYERS_PID', 'pid'))->where('uid',$uid)->get();
+        $pid = json_decode($pid,true);
+        $pid = $pid[0]['pid'];
+        $output['steamid'] = $pid;
+        $text = "";
+        $val = 0;
+        if($type == 1) {//Cash
+            $money = DB::table('players')->select('bankacc','cash')->where('uid', $uid)->get();
+            $money = json_decode($money,true);
+            DB::table('players')->where('uid', $uid)->update([
+                'bankacc' => $bank,
+                'cash' => 0
+            ]);
+            if(0 != $money[0]['cash']) {
+                $text = $text . "Changed cash from " . $money[0]['cash'] . "$ to 0$";
+                $val++;
+            }
+            if($bank != $money[0]['bankacc']) {
+                if($val > 0) {
+                    $text = $text . "|";
+                }
+                $text = $text . "Changed bankacc from " . $money[0]['bankacc'] . "$ to " . $bank . "$";
+            }
+            $output['status'] = true;
+        } elseif ($type == 2) {//Vehicles
+            DB::table('vehicles')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+                ['active' => 2]
+            );
+            $output['status'] = true;
+        } elseif ($type == 3) {//Houses
+            DB::table('houses')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+                ['owned' => 2]
+            );
+            DB::table('containers')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+                ['owned' => 2]
+            );
+            $output['status'] = true;
+        } elseif ($type == 4) {//All
+            DB::table('players')->where('uid', $uid)->update([
+                'cash' => 0,
+                'bankacc' => $bank,
+                'coplevel' => 0,
+                'mediclevel' => 0,
+                'civ_licenses' => '"[]"',
+                'cop_licenses' => '"[]"',
+                'med_licenses' => '"[]"',
+                'civ_gear' => '"[]"',
+                'cop_gear' => '"[]"',
+                'med_gear' => '"[]"',
+                'civ_stats' => '"[100,100,0]"',
+                'cop_stats' => '"[100,100,0]"',
+                'med_stats' => '"[100,100,0]"',
+                'arrested' => 0,
+                'adminlevel' => 0,
+                'donorlevel' => 0,
+                'blacklist' => 0,
+                'civ_position' => '"[0,0,0]"'
+            ]);
+            DB::table('vehicles')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+                ['active' => 2]
+            );
+            DB::table('houses')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+                ['owned' => 2]
+            );
+            DB::table('containers')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+                ['owned' => 2]
+            );
+            $output['status'] = true;
+        } elseif ($type == 5) {//delete
+            try {
+                DB::table('players')->where('uid', $uid)->delete();
+                DB::table('vehicles')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->delete();
+                DB::table('houses')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->delete();
+                DB::table('containers')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->delete();
+                $output['status'] = true;
+            } catch (Exception $e) {
+                $output['status'] = false;
+            }
+        }
+        $output['text'] = $text;
+        return $output;
+    }
+
     public function getlast30days() {
         $output = [];
         for ($i = 0; $i <= 30; $i++) {
