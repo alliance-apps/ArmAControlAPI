@@ -22,6 +22,7 @@ class sharedApi
             return $next($request);
         }
 
+
         $payload = $request->db;
         $db = Crypt::decrypt($payload);
         $db = json_decode($db);
@@ -30,6 +31,7 @@ class sharedApi
         config(['database.connections.mysql.username' => $db->username]);
         config(['database.connections.mysql.password' => $db->password]);
         config(['database.connections.mysql.port' => $db->port]);
+
         return $next($request);
     }
 }
