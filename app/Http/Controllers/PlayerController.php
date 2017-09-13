@@ -94,7 +94,7 @@ class PlayerController extends Controller
 
     public function version()
     {
-        return env('VERSION', "1.2");
+        return env('VERSION', "1.3");
     }
 
     public function getPlayersLight(Request $request)
