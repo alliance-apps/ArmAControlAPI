@@ -12,6 +12,7 @@ class HouseController extends Controller
         $gangs = DB::table('houses')->orderBy('id')->get();
 
         $count = 0;
+        $output = [];
         foreach ($gangs as $gang)
         {
             $output[$count]['id'] = $gang->id;
@@ -35,7 +36,7 @@ class HouseController extends Controller
     {
         $gangs = DB::table('houses')->where('pid', $pid)->orderBy('id')->get();
         $return['error'] = true;
-
+        $output = [];
         $count = 0;
         foreach ($gangs as $gang)
         {
@@ -65,6 +66,7 @@ class HouseController extends Controller
 
     public function house($id)
     {
+        $output = [];
         $house = DB::table('houses')->where('id', $id)->first();
         $return['error'] = true;
         if (is_null($house)) return $return;

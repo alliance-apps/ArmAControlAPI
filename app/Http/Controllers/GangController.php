@@ -43,7 +43,7 @@ class GangController extends Controller
     public function ganglist()
     {
         $gangs = DB::table('gangs')->orderBy('active', 'DESC')->get();
-
+        $output = [];
         $count = 0;
         foreach ($gangs as $gang)
         {
@@ -65,6 +65,7 @@ class GangController extends Controller
     public function gang($id)
     {
         $gangs = DB::table('gangs')->where('id', $id)->get();
+        $output = [];
         foreach ($gangs as $gang)
         {
             $output['id'] = $gang->id;

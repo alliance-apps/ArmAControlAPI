@@ -31,6 +31,7 @@ class WantedController extends Controller
     {
         $wanteds = DB::table('wanted')->orderBy('wantedBounty', 'DESC')->get();
 
+        $output = [];
         $count = 0;
         foreach ($wanteds as $wanted)
         {
