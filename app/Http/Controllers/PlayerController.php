@@ -404,7 +404,7 @@ class PlayerController extends Controller
         $pid = json_decode($pid,true);
         $pid = $pid[0]['pid'];
         $output['steamid'] = $pid;
-        $text = "";
+        $text = [];
         $val = 0;
         if($type == 1) {//Cash
             $money = DB::table('players')->select('bankacc','cash')->where('uid', $uid)->get();
@@ -425,18 +425,28 @@ class PlayerController extends Controller
             }
             $output['status'] = true;
         } elseif ($type == 2) {//Vehicles
-            DB::table('vehicles')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+            $text = DB::table('vehicles')->select('classname','id')->where('pid', $pid)->where('active','!=',2)->get();
+            $text = json_decode($text,true);
+            $text = json_encode($text);
+            DB::table('vehicles')->where('pid', $pid)->update(
                 ['active' => 2]
             );
             $output['status'] = true;
         } elseif ($type == 3) {//Houses
-            DB::table('houses')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+            $houses = DB::table('houses')->select('id')->where('pid', $pid)->get();
+            DB::table('houses')->where('pid', $pid)->update(
                 ['owned' => 2]
             );
-            DB::table('containers')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
-                ['owned' => 2]
+            $houses = json_decode($houses,true);
+            $text['houses'] = json_encode($houses);
+            $containers = DB::table('containers')->select('id','classname')->where('pid', $pid)->get();
+            DB::table('containers')->where('pid', $pid)->update(
+                ['active' => 2]
             );
+            $containers = json_decode($containers,true);
+            $text['containers'] = json_encode($containers);
             $output['status'] = true;
+
         } elseif ($type == 4) {//All
             DB::table('players')->where('uid', $uid)->update([
                 'cash' => 0,
@@ -458,22 +468,22 @@ class PlayerController extends Controller
                 'blacklist' => 0,
                 'civ_position' => '"[0,0,0]"'
             ]);
-            DB::table('vehicles')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+            DB::table('vehicles')->where('pid', $pid)->update(
                 ['active' => 2]
             );
-            DB::table('houses')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+            DB::table('houses')->where('pid', $pid)->update(
                 ['owned' => 2]
             );
-            DB::table('containers')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->update(
+            DB::table('containers')->where('pid', $pid)->update(
                 ['owned' => 2]
             );
             $output['status'] = true;
         } elseif ($type == 5) {//delete
             try {
                 DB::table('players')->where('uid', $uid)->delete();
-                DB::table('vehicles')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->delete();
-                DB::table('houses')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->delete();
-                DB::table('containers')->where(env('TABLE_PLAYERS_PID', 'pid'), $pid)->delete();
+                DB::table('vehicles')->where('pid', $pid)->delete();
+                DB::table('houses')->where('pid', $pid)->delete();
+                DB::table('containers')->where('pid', $pid)->delete();
                 $output['status'] = true;
             } catch (Exception $e) {
                 $output['status'] = false;
