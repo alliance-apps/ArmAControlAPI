@@ -54,8 +54,15 @@ class GangController extends Controller
             $output[$count]['bank'] = $gang->bank;
             $output[$count]['active'] = $gang->active;
             $output[$count]['created_at'] = $gang->insert_time;
-            $output[$count]['members'] = $this->convertLicenseMREStoArray($gang->members);
-            $output[$count]['membersNames'] = $this->getGangMemberNames($output[$count]['members']);
+            try {
+                $output[$count]['members'] = $this->convertLicenseMREStoArray($gang->members);
+                $output[$count]['membersNames'] = $this->getGangMemberNames($output[$count]['members']);
+            } catch (\Exception $e) {
+                $output[$count]['name'] = $output[$count]['name'].' EXCEPTION';
+                $output[$count]['members'] = [];
+                $output[$count]['membersNames'] = [];
+            }
+
 
             $count++;
         }
