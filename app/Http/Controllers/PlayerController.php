@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Mockery\Exception;
 
 class PlayerController extends Controller
@@ -90,11 +91,9 @@ class PlayerController extends Controller
 
 
 
-
-
     public function version()
     {
-        return env('VERSION', "1.3");
+        return env('VERSION', "1.4");
     }
 
     public function getPlayersLight(Request $request)
@@ -122,7 +121,16 @@ class PlayerController extends Controller
         } elseif($type == "top10money")
         {
             $players = DB::table('players')->orderBy('bankacc', 'DESC')->take(10)->get();
+        } elseif($type == "search") {
+            $players = DB::table('players')
+                ->where('name', 'LIKE', '%'.$request->q.'%')
+                ->orWhere('uid', $request->q)
+                ->orWhere('aliases', 'LIKE', '%'.$request->q.'%')
+                ->orWhere(config('sharedapi.pid'), 'LIKE', '%'.$request->q.'%')
+                ->get();
         }
+
+
 
 
 
@@ -133,40 +141,52 @@ class PlayerController extends Controller
         {
             $output[$count]['uid'] = $player->uid;
             $output[$count]['name'] = $player->name;
-            $output[$count]['aliases'] = str_replace('`]"', '',str_replace('"[`', '', $player->aliases));
-            $pid = env('TABLE_PLAYERS_PID', 'pid');
+            $pid = config('sharedapi.pid');
             $output[$count]['pid'] = $player->$pid;
-            $output[$count]['cash'] = $player->cash;
-            $output[$count]['bank'] = $player->bankacc;
-            $output[$count]['coplevel'] = intval($player->coplevel);
-            $output[$count]['mediclevel'] = intval($player->mediclevel);
-            $output[$count]['adminlevel'] = intval($player->adminlevel);
-            $output[$count]['donorlevel'] = intval($player->donorlevel);
-            $output[$count]['opforlevel']['enabled'] = env('TABLE_PLAYERS_OPFOR_ENABLED', false);
-            if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+
+            if ($type != "search")
             {
-                $opfor = env('TABLE_PLAYERS_OPFOR');
-                $output[$count]['opforlevel'] = intval($player->$opfor);
+                $output[$count]['aliases'] = str_replace('`]"', '',str_replace('"[`', '', $player->aliases));
+                $output[$count]['cash'] = $player->cash;
+                $output[$count]['bank'] = $player->bankacc;
+                $output[$count]['coplevel'] = intval($player->coplevel);
+                $output[$count]['mediclevel'] = intval($player->mediclevel);
+                $output[$count]['adminlevel'] = intval($player->adminlevel);
+                $output[$count]['donorlevel'] = intval($player->donorlevel);
+                $output[$count]['opforlevel']['enabled'] = config('sharedapi.opfor_enabled');
+                if (config('sharedapi.opfor_enabled'))
+                {
+                    $opfor = config('sharedapi.opfor_level');
+                    $output[$count]['opforlevel'] = intval($player->$opfor);
+                }
+                $output[$count]['arrested'] = intval($player->arrested);
+                $output[$count]['playtime']['enabled'] = env('TABLE_PLAYERS_PLAYTIME_ENABLED', true);
+                if (env('TABLE_PLAYERS_PLAYTIME_ENABLED', true))
+                {
+                    try {
+                        $playtime = str_replace('"[', '', $player->playtime);
+                        $playtime = str_replace(']"', '', $playtime);
+                        $playtime = explode(',', $playtime);
+                        $output[$count]['playtime']['civ'] = intval($playtime[2]);
+                        $output[$count]['playtime']['cop'] = intval($playtime[0]);
+                        $output[$count]['playtime']['med'] = intval($playtime[1]);
+                    } catch (\Exception $e) {
+                        $output[$count]['playtime']['civ'] = 0;
+                        $output[$count]['playtime']['cop'] = 0;
+                        $output[$count]['playtime']['med'] = 0;
+                    }
+
+                }
+                if (env('TABLE_PLAYERS_TIMESTAMPS', true))
+                {
+                    $output[$count]['insert_time'] = $player->insert_time;
+                    $output[$count]['last_seen'] = $player->last_seen;
+                } else {
+                    $output[$count]['insert_time'] = '0000-00-00 00:00:00';
+                    $output[$count]['last_seen'] = '0000-00-00 00:00:00';
+                }
             }
-            $output[$count]['arrested'] = intval($player->arrested);
-            $output[$count]['playtime']['enabled'] = env('TABLE_PLAYERS_PLAYTIME_ENABLED', true);
-            if (env('TABLE_PLAYERS_PLAYTIME_ENABLED', true))
-            {
-                $playtime = str_replace('"[', '', $player->playtime);
-                $playtime = str_replace(']"', '', $playtime);
-                $playtime = explode(',', $playtime);
-                $output[$count]['playtime']['civ'] = intval($playtime[2]);
-                $output[$count]['playtime']['cop'] = intval($playtime[0]);
-                $output[$count]['playtime']['med'] = intval($playtime[1]);
-            }
-            if (env('TABLE_PLAYERS_TIMESTAMPS', true))
-            {
-                $output[$count]['insert_time'] = $player->insert_time;
-                $output[$count]['last_seen'] = $player->last_seen;
-            } else {
-                $output[$count]['insert_time'] = '0000-00-00 00:00:00';
-                $output[$count]['last_seen'] = '0000-00-00 00:00:00';
-            }
+
             $count++;
         }
         return $output;
@@ -184,7 +204,7 @@ class PlayerController extends Controller
             $output[$count]['uid'] = $player->uid;
             $output[$count]['name'] = $player->name;
             $output[$count]['aliases'] = str_replace('`]"', '',str_replace('"[`', '', $player->aliases));
-            $pid = env('TABLE_PLAYERS_PID', 'pid');
+            $pid = config('sharedapi.pid');
             $output[$count]['pid'] = $player->$pid;
             $output[$count]['cash'] = $player->cash;
             $output[$count]['bank'] = $player->bankacc;
@@ -192,10 +212,10 @@ class PlayerController extends Controller
             $output[$count]['mediclevel'] = intval($player->mediclevel);
             $output[$count]['adminlevel'] = intval($player->adminlevel);
             $output[$count]['donorlevel'] = intval($player->donorlevel);
-            $output[$count]['opforlevel']['enabled'] = env('TABLE_PLAYERS_OPFOR_ENABLED', false);
-            if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+            $output[$count]['opforlevel']['enabled'] = config('sharedapi.opfor_enabled');
+            if (config('sharedapi.opfor_enabled'))
             {
-                $opfor = env('TABLE_PLAYERS_OPFOR');
+                $opfor = config('sharedapi.opfor_level');
                 $output[$count]['opforlevel'] = intval($player->$opfor);
             }
             $output[$count]['arrested'] = intval($player->arrested);
@@ -247,7 +267,7 @@ class PlayerController extends Controller
     {
         if(strlen($uid) == 17 && ctype_digit($uid))
         {
-            $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $uid)->take(1)->get();
+            $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', config('sharedapi.pid')), $uid)->take(1)->get();
         }
         else {
             $player = DB::table('players')->where('uid', $uid)->take(1)->get();
@@ -266,7 +286,7 @@ class PlayerController extends Controller
             $output[$count]['uid'] = $player->uid;
             $output[$count]['name'] = $player->name;
             $output[$count]['aliases'] = str_replace('`]"', '',str_replace('"[`', '', $player->aliases));
-            $pid = env('TABLE_PLAYERS_PID', 'pid');
+            $pid = config('sharedapi.pid');
             $output[$count]['pid'] = $player->$pid;
 
 
@@ -290,24 +310,24 @@ class PlayerController extends Controller
             $output[$count]['mediclevel'] = intval($player->mediclevel);
             $output[$count]['adminlevel'] = intval($player->adminlevel);
             $output[$count]['donorlevel'] = intval($player->donorlevel);
-            $output[$count]['extralevel1_enabled'] = env('TABLE_PLAYERS_EXTRALEVEL_1', false);
-            if (env('TABLE_PLAYERS_EXTRALEVEL_1', false))
+            $output[$count]['extralevel1_enabled'] = config('sharedapi.extralevel_1');
+            if (config('sharedapi.extralevel_1'))
             {
-                $el1 = env('TABLE_PLAYERS_EXTRALEVEL_1_column');
+                $el1 = config('sharedapi.extralevel_1_column');
                 $output[$count]['extralevel1'] = intval($player->$el1);
             }
-            $output[$count]['extralevel2_enabled'] = env('TABLE_PLAYERS_EXTRALEVEL_2', false);
-            if (env('TABLE_PLAYERS_EXTRALEVEL_2', false))
+            $output[$count]['extralevel2_enabled'] = config('sharedapi.extralevel_2');
+            if (config('sharedapi.extralevel_2'))
             {
-                $el2 = env('TABLE_PLAYERS_EXTRALEVEL_2_column');
+                $el2 = config('sharedapi.extralevel_2_column');
                 $output[$count]['extralevel2'] = intval($player->$el2);
             }
 
-            $output[$count]['opforlevel']['enabled'] = env('TABLE_PLAYERS_OPFOR_ENABLED', false);
+            $output[$count]['opforlevel']['enabled'] = config('sharedapi.opfor_enabled');
             $output[$count]['opforlevel'] = 0;
-            if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+            if (config('sharedapi.opfor_enabled'))
             {
-                $opfor = env('TABLE_PLAYERS_OPFOR');
+                $opfor = config('sharedapi.opfor_level');
                 $output[$count]['opforlevel'] = intval($player->$opfor);
             }
             $output[$count]['arrested'] = intval($player->arrested);
@@ -327,18 +347,26 @@ class PlayerController extends Controller
             $output[$count]['cop_licenses'] = $this->convertLicenseMREStoArray($player->cop_licenses);
             $output[$count]['med_licenses'] = $this->convertLicenseMREStoArray($player->med_licenses);
             $output[$count]['opfor_licenses'] = null;
+            $output[$count]['opfor_licenses_string'] = null;
+            if (config('sharedapi.opfor_enabled'))
+            {
+                $opfl = config('sharedapi.opfor_licenses');
+                $output[$count]['opfor_licenses'] = $this->convertLicenseMREStoArray($player->$opfl);
+                $output[$count]['opfor_licenses_string'] = $player->$opfl;
+            }
+
             $output[$count]['civ_licenses_string'] = $player->civ_licenses;
             $output[$count]['cop_licenses_string'] = $player->cop_licenses;
             $output[$count]['med_licenses_string'] = $player->med_licenses;
-            $output[$count]['opfor_licenses_string'] = null;
+
             $output[$count]['newgear'] = env('NEW_GEAR', false);
             $output[$count]['civ_gear'] = $player->civ_gear;
             $output[$count]['cop_gear'] = $player->cop_gear;
             $output[$count]['med_gear'] = $player->med_gear;
             $output[$count]['opfor_gear'] = '"[]"';
-            if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+            if (config('sharedapi.opfor_enabled'))
             {
-                $opfg = env('TABLE_PLAYERS_OPFOR_GEAR');
+                $opfg = config('sharedapi.opfor_gear');
                 $output[$count]['opfor_gear'] = $player->$opfg;
             }
             $output[$count]['stats']['enabled'] = true;

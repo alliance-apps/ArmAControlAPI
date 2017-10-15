@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Schema;
 use League\Flysystem\Config;
 
 class sharedApi
@@ -17,6 +18,12 @@ class sharedApi
      */
     public function handle($request, Closure $next)
     {
+        if (Schema::hasColumn('players', 'pid'))
+        {
+            config(['sharedapi.pid' => 'pid']);
+        } else {
+            config(['sharedapi.pid' => 'playerid']);
+        }
         if (!env('SHAREDAPI', false))
         {
             return $next($request);
@@ -31,6 +38,18 @@ class sharedApi
         config(['database.connections.mysql.username' => $db->username]);
         config(['database.connections.mysql.password' => $db->password]);
         config(['database.connections.mysql.port' => $db->port]);
+
+
+
+
+
+
+
+
+
+
+
+
 
         return $next($request);
     }

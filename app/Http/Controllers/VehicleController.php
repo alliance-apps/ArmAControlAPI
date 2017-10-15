@@ -64,7 +64,7 @@ class VehicleController extends Controller
     public function listForPlayer($id)
     {
         $player = DB::table('players')->where('uid', $id)->first();
-        $pid = env('TABLE_PLAYERS_PID', 'pid');
+        $pid = config('sharedapi.pid');
         $playerid = $player->$pid;
         $vehicles = DB::table('vehicles')->where('pid', $playerid)->get();
 
