@@ -892,13 +892,11 @@ class Connection implements ConnectionInterface
     public function getDoctrineConnection()
     {
         if (is_null($this->doctrineConnection)) {
-            $driver = $this->getDoctrineDriver();
+            $data = ['pdo' => $this->getPdo(), 'dbname' => $this->getConfig('database')];
 
-            $this->doctrineConnection = new DoctrineConnection([
-                'pdo' => $this->getPdo(),
-                'dbname' => $this->getConfig('database'),
-                'driver' => $driver->getName(),
-            ], $driver);
+            $this->doctrineConnection = new DoctrineConnection(
+                $data, $this->getDoctrineDriver()
+            );
         }
 
         return $this->doctrineConnection;

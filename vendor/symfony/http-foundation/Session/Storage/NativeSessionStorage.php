@@ -52,6 +52,8 @@ class NativeSessionStorage implements SessionStorageInterface
     protected $metadataBag;
 
     /**
+     * Constructor.
+     *
      * Depending on how you want the storage driver to behave you probably
      * want to override this constructor entirely.
      *

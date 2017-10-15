@@ -55,6 +55,8 @@ class ApplicationDescription
     private $showHidden;
 
     /**
+     * Constructor.
+     *
      * @param Application $application
      * @param string|null $namespace
      * @param bool        $showHidden

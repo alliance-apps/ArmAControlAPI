@@ -34,6 +34,11 @@ class DebugClassLoader
     private static $php7Reserved = array('int', 'float', 'bool', 'string', 'true', 'false', 'null');
     private static $darwinCache = array('/' => array('/', array()));
 
+    /**
+     * Constructor.
+     *
+     * @param callable $classLoader A class loader
+     */
     public function __construct(callable $classLoader)
     {
         $this->classLoader = $classLoader;

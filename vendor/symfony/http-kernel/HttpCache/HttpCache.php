@@ -36,6 +36,8 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
     private $traces = array();
 
     /**
+     * Constructor.
+     *
      * The available options are:
      *
      *   * debug:                 If true, the traces are added as a HTTP header to ease debugging
@@ -605,6 +607,14 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
      */
     private function restoreResponseBody(Request $request, Response $response)
     {
+        if ($request->isMethod('HEAD') || 304 === $response->getStatusCode()) {
+            $response->setContent(null);
+            $response->headers->remove('X-Body-Eval');
+            $response->headers->remove('X-Body-File');
+
+            return;
+        }
+
         if ($response->headers->has('X-Body-Eval')) {
             ob_start();
 
@@ -620,11 +630,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
                 $response->headers->set('Content-Length', strlen($response->getContent()));
             }
         } elseif ($response->headers->has('X-Body-File')) {
-            // Response does not include possibly dynamic content (ESI, SSI), so we need
-            // not handle the content for HEAD requests
-            if (!$request->isMethod('HEAD')) {
-                $response->setContent(file_get_contents($response->headers->get('X-Body-File')));
-            }
+            $response->setContent(file_get_contents($response->headers->get('X-Body-File')));
         } else {
             return;
         }
@@ -698,7 +704,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
      *
      * @param Response $entry
      *
-     * @return bool true when the stale response may be served, false otherwise
+     * @return bool True when the stale response may be served, false otherwise.
      */
     private function mayServeStaleWhileRevalidate(Response $entry)
     {
@@ -716,7 +722,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
      *
      * @param Request $request The request to wait for
      *
-     * @return bool true if the lock was released before the internal timeout was hit; false if the wait timeout was exceeded
+     * @return bool True if the lock was released before the internal timeout was hit; false if the wait timeout was exceeded.
      */
     private function waitForLock(Request $request)
     {

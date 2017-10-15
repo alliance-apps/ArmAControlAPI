@@ -36,12 +36,7 @@ class ClassMethodsMatcher extends AbstractMatcher
 
         $class = $this->getNamespaceAndClass($tokens);
 
-        try {
-            $reflection = new \ReflectionClass($class);
-        } catch (\ReflectionException $re) {
-            return array();
-        }
-
+        $reflection = new \ReflectionClass($class);
         $methods = $reflection->getMethods(\ReflectionMethod::IS_STATIC);
         $methods = array_map(function (\ReflectionMethod $method) {
             return $method->getName();

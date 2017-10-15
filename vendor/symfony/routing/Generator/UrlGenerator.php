@@ -76,6 +76,8 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
     );
 
     /**
+     * Constructor.
+     *
      * @param RouteCollection      $routes  A RouteCollection instance
      * @param RequestContext       $context The context
      * @param LoggerInterface|null $logger  A logger instance

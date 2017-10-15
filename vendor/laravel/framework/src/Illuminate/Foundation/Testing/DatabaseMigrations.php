@@ -19,8 +19,6 @@ trait DatabaseMigrations
 
         $this->beforeApplicationDestroyed(function () {
             $this->artisan('migrate:rollback');
-
-            RefreshDatabaseState::$migrated = false;
         });
     }
 }

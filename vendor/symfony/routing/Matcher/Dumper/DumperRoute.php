@@ -33,6 +33,8 @@ class DumperRoute
     private $route;
 
     /**
+     * Constructor.
+     *
      * @param string $name  The route name
      * @param Route  $route The route
      */

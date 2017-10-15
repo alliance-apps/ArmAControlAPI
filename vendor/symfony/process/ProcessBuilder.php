@@ -15,6 +15,8 @@ use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 
 /**
+ * Process builder.
+ *
  * @author Kris Wallsmith <kris@symfony.com>
  */
 class ProcessBuilder
@@ -30,6 +32,8 @@ class ProcessBuilder
     private $outputDisabled = false;
 
     /**
+     * Constructor.
+     *
      * @param string[] $arguments An array of arguments
      */
     public function __construct(array $arguments = array())

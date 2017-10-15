@@ -40,6 +40,8 @@ class ResponseHeaderBag extends HeaderBag
     protected $headerNames = array();
 
     /**
+     * Constructor.
+     *
      * @param array $headers An array of HTTP headers
      */
     public function __construct(array $headers = array())

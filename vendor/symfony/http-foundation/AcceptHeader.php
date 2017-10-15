@@ -32,6 +32,8 @@ class AcceptHeader
     private $sorted = true;
 
     /**
+     * Constructor.
+     *
      * @param AcceptHeaderItem[] $items
      */
     public function __construct(array $items)

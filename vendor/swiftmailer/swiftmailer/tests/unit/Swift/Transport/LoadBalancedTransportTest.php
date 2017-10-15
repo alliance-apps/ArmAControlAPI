@@ -815,7 +815,7 @@ class Swift_Transport_LoadBalancedTransportTest extends \SwiftMailerTestCase
         }
 
         $copy = $ref2;
-        $randomString = uniqid('yay', true);
+        $randomString = uniqid('yay');
         $ref2 = $randomString;
         $isRef = ($ref1 === $ref2);
         $ref2 = $copy;

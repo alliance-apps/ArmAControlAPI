@@ -489,6 +489,9 @@ OEL;
 
     /**
      * Strips of the sender headers and Mime-Version.
+     *
+     * @param Swift_ByteStream_TemporaryFileByteStream $messageStream
+     * @param Swift_ByteStream_TemporaryFileByteStream $inputStream
      */
     protected function cleanMessage($content)
     {

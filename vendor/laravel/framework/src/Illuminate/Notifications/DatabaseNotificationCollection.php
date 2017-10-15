@@ -17,16 +17,4 @@ class DatabaseNotificationCollection extends Collection
             $notification->markAsRead();
         });
     }
-
-    /**
-     * Mark all notifications as unread.
-     *
-     * @return void
-     */
-    public function markAsUnread()
-    {
-        $this->each(function ($notification) {
-            $notification->markAsUnread();
-        });
-    }
 }

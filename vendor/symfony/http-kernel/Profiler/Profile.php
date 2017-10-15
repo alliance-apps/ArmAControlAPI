@@ -44,6 +44,8 @@ class Profile
     private $children = array();
 
     /**
+     * Constructor.
+     *
      * @param string $token The token
      */
     public function __construct($token)

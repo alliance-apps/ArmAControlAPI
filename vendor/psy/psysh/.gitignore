@@ -7,5 +7,3 @@ manual/
 dist/
 __pycache__
 .php_cs.cache
-psysh.phar
-psysh-compat.phar

@@ -282,10 +282,10 @@ if (! function_exists('array_sort')) {
      * Sort the array by the given callback or attribute name.
      *
      * @param  array  $array
-     * @param  callable|string|null  $callback
+     * @param  callable|string  $callback
      * @return array
      */
-    function array_sort($array, $callback = null)
+    function array_sort($array, $callback)
     {
         return Arr::sort($array, $callback);
     }
@@ -1154,14 +1154,13 @@ if (! function_exists('windows_os')) {
 
 if (! function_exists('with')) {
     /**
-     * Return the given value, optionally passed through the given callback.
+     * Return the given object. Useful for chaining.
      *
-     * @param  mixed  $value
-     * @param  callable|null  $callback
+     * @param  mixed  $object
      * @return mixed
      */
-    function with($value, callable $callback = null)
+    function with($object)
     {
-        return is_null($callback) ? $value : $callback($value);
+        return $object;
     }
 }

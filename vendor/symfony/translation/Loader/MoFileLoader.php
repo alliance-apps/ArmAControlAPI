@@ -59,9 +59,9 @@ class MoFileLoader extends FileLoader
         $magic = unpack('V1', fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
 
-        if (self::MO_LITTLE_ENDIAN_MAGIC == $magic) {
+        if ($magic == self::MO_LITTLE_ENDIAN_MAGIC) {
             $isBigEndian = false;
-        } elseif (self::MO_BIG_ENDIAN_MAGIC == $magic) {
+        } elseif ($magic == self::MO_BIG_ENDIAN_MAGIC) {
             $isBigEndian = true;
         } else {
             throw new InvalidResourceException('MO stream content has an invalid format.');
@@ -95,7 +95,7 @@ class MoFileLoader extends FileLoader
             fseek($stream, $offset);
             $singularId = fread($stream, $length);
 
-            if (false !== strpos($singularId, "\000")) {
+            if (strpos($singularId, "\000") !== false) {
                 list($singularId, $pluralId) = explode("\000", $singularId);
             }
 
@@ -110,7 +110,7 @@ class MoFileLoader extends FileLoader
             fseek($stream, $offset);
             $translated = fread($stream, $length);
 
-            if (false !== strpos($translated, "\000")) {
+            if (strpos($translated, "\000") !== false) {
                 $translated = explode("\000", $translated);
             }
 

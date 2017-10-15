@@ -47,12 +47,10 @@ class Configuration
         'defaultIncludes',
         'eraseDuplicates',
         'errorLoggingLevel',
-        'forceArrayIndexes',
         'historySize',
         'loop',
         'manualDbFile',
         'pager',
-        'prompt',
         'requireSemicolons',
         'runtimeDir',
         'startupMessage',
@@ -90,7 +88,6 @@ class Configuration
     private $colorMode;
     private $updateCheck;
     private $startupMessage;
-    private $forceArrayIndexes = false;
 
     // services
     private $readline;
@@ -103,7 +100,6 @@ class Configuration
     private $presenter;
     private $completer;
     private $checker;
-    private $prompt;
 
     /**
      * Construct a Configuration instance.
@@ -1076,7 +1072,7 @@ class Configuration
     public function getPresenter()
     {
         if (!isset($this->presenter)) {
-            $this->presenter = new Presenter($this->getOutput()->getFormatter(), $this->forceArrayIndexes());
+            $this->presenter = new Presenter($this->getOutput()->getFormatter());
         }
 
         return $this->presenter;
@@ -1254,45 +1250,5 @@ class Configuration
     public function getStartupMessage()
     {
         return $this->startupMessage;
-    }
-
-    /**
-     * Set the prompt.
-     *
-     * @param string $prompt
-     */
-    public function setPrompt($prompt)
-    {
-        $this->prompt = $prompt;
-    }
-
-    /**
-     * Get the prompt.
-     *
-     * @return string
-     */
-    public function getPrompt()
-    {
-        return $this->prompt;
-    }
-
-    /**
-     * Get the force array indexes.
-     *
-     * @return bool
-     */
-    public function forceArrayIndexes()
-    {
-        return $this->forceArrayIndexes;
-    }
-
-    /**
-     * Set the force array indexes.
-     *
-     * @param bool $forceArrayIndexes
-     */
-    public function setForceArrayIndexes($forceArrayIndexes)
-    {
-        $this->forceArrayIndexes = $forceArrayIndexes;
     }
 }

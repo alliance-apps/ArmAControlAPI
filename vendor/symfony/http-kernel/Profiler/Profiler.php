@@ -46,6 +46,8 @@ class Profiler
     private $enabled = true;
 
     /**
+     * Constructor.
+     *
      * @param ProfilerStorageInterface $storage A ProfilerStorageInterface instance
      * @param LoggerInterface          $logger  A LoggerInterface instance
      */

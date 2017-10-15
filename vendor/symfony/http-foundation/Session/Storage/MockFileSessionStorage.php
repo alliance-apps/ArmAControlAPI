@@ -30,6 +30,8 @@ class MockFileSessionStorage extends MockArraySessionStorage
     private $savePath;
 
     /**
+     * Constructor.
+     *
      * @param string      $savePath Path of directory to save session files
      * @param string      $name     Session name
      * @param MetadataBag $metaBag  MetadataBag instance

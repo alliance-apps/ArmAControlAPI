@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Caster\LinkStub;
 
 /**
+ * ConfigDataCollector.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class ConfigDataCollector extends DataCollector implements LateDataCollectorInterface
@@ -31,6 +33,8 @@ class ConfigDataCollector extends DataCollector implements LateDataCollectorInte
     private $hasVarDumper;
 
     /**
+     * Constructor.
+     *
      * @param string $name    The name of the application using the web profiler
      * @param string $version The version of the application using the web profiler
      */

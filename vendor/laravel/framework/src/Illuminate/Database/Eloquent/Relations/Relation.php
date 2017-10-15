@@ -188,7 +188,7 @@ abstract class Relation
     {
         return $this->getRelationExistenceQuery(
             $query, $parentQuery, new Expression('count(*)')
-        )->setBindings([], 'select');
+        );
     }
 
     /**
@@ -315,7 +315,7 @@ abstract class Relation
 
         if (is_array($map)) {
             static::$morphMap = $merge && static::$morphMap
-                            ? $map + static::$morphMap : $map;
+                            ? array_merge(static::$morphMap, $map) : $map;
         }
 
         return static::$morphMap;

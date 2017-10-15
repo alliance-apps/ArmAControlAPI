@@ -165,24 +165,20 @@ class ShellInput extends StringInput
                 $this->arguments[$arg->getName()] = $arg->isArray() ? array($token) : $token;
             }
 
-            return;
-        }
-
         // if last argument isArray(), append token to last argument
-        if ($this->definition->hasArgument($c - 1) && $this->definition->getArgument($c - 1)->isArray()) {
+        } elseif ($this->definition->hasArgument($c - 1) && $this->definition->getArgument($c - 1)->isArray()) {
             $arg = $this->definition->getArgument($c - 1);
             $this->arguments[$arg->getName()][] = $token;
 
-            return;
-        }
-
         // unexpected argument
-        $all = $this->definition->getArguments();
-        if (count($all)) {
-            throw new \RuntimeException(sprintf('Too many arguments, expected arguments "%s".', implode('" "', array_keys($all))));
-        }
+        } else {
+            $all = $this->definition->getArguments();
+            if (count($all)) {
+                throw new \RuntimeException(sprintf('Too many arguments, expected arguments "%s".', implode('" "', array_keys($all))));
+            }
 
-        throw new \RuntimeException(sprintf('No arguments expected, got "%s".', $token));
+            throw new \RuntimeException(sprintf('No arguments expected, got "%s".', $token));
+        }
     }
 
     // Everything below this is copypasta from ArgvInput private methods

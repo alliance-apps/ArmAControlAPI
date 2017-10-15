@@ -22,6 +22,8 @@ class UriSigner
     private $parameter;
 
     /**
+     * Constructor.
+     *
      * @param string $secret    A secret
      * @param string $parameter Query string parameter to use
      */

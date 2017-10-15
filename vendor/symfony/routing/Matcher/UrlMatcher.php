@@ -55,6 +55,8 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
     protected $expressionLanguageProviders = array();
 
     /**
+     * Constructor.
+     *
      * @param RouteCollection $routes  A RouteCollection instance
      * @param RequestContext  $context The context
      */

@@ -29,6 +29,8 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
 class HtmlExtension extends AbstractExtension
 {
     /**
+     * Constructor.
+     *
      * @param Translator $translator
      */
     public function __construct(Translator $translator)

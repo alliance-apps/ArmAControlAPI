@@ -27,6 +27,8 @@ class AnnotationFileLoader extends FileLoader
     protected $loader;
 
     /**
+     * Constructor.
+     *
      * @param FileLocatorInterface  $locator A FileLocator instance
      * @param AnnotationClassLoader $loader  An AnnotationClassLoader instance
      *

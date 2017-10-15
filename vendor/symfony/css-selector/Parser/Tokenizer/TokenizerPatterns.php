@@ -83,6 +83,9 @@ class TokenizerPatterns
      */
     private $quotedStringPattern;
 
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         $this->unicodeEscapePattern = '\\\\([0-9a-f]{1,6})(?:\r\n|[ \n\r\t\f])?';

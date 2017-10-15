@@ -47,6 +47,8 @@ class ContainerAwareEventDispatcher extends EventDispatcher
     private $listeners = array();
 
     /**
+     * Constructor.
+     *
      * @param ContainerInterface $container A ContainerInterface instance
      */
     public function __construct(ContainerInterface $container)
@@ -197,7 +199,7 @@ class ContainerAwareEventDispatcher extends EventDispatcher
                 $key = $serviceId.'.'.$method;
                 if (!isset($this->listeners[$eventName][$key])) {
                     $this->addListener($eventName, array($listener, $method), $priority);
-                } elseif ($this->listeners[$eventName][$key] !== $listener) {
+                } elseif ($listener !== $this->listeners[$eventName][$key]) {
                     parent::removeListener($eventName, array($this->listeners[$eventName][$key], $method));
                     $this->addListener($eventName, array($listener, $method), $priority);
                 }

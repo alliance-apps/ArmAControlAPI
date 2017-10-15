@@ -130,10 +130,6 @@ class SqlServerConnector extends Connector implements ConnectorInterface
             $arguments['MultipleActiveResultSets'] = 'false';
         }
 
-        if (isset($config['transaction_isolation'])) {
-            $arguments['TransactionIsolation'] = $config['transaction_isolation'];
-        }
-
         return $this->buildConnectString('sqlsrv', $arguments);
     }
 
