@@ -39,6 +39,7 @@ class PDOConnection extends PDO implements Connection, ServerInfoAwareConnection
      */
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
+
         //ini_set("default_socket_timeout", 5);
         try {
             parent::__construct($dsn, $user, $password, $options);
@@ -50,6 +51,7 @@ class PDOConnection extends PDO implements Connection, ServerInfoAwareConnection
             $output['error'] = true;
             $output['errorType'] = 'mysql';
             $output['mysqlError'] = $exception->getMessage();
+            $output['test'] = $password;
             $json = json_encode($output);
             die($json);
             throw new PDOException($exception);
