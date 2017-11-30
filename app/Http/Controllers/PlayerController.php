@@ -428,7 +428,7 @@ class PlayerController extends Controller
         $output['status'] = false;
         $type = $request['type'];
         $bank = $request['bank'];
-        $pid = DB::table('players')->select(env('TABLE_PLAYERS_PID', 'pid'))->where('uid',$uid)->get();
+        $pid = DB::table('players')->select(config('sharedapi.pid'))->where('uid',$uid)->get();
         $pid = json_decode($pid,true);
         $pid = $pid[0]['pid'];
         $output['steamid'] = $pid;

@@ -26,7 +26,7 @@ class GangController extends Controller
         $count = 0;
         foreach ($members as $member)
         {
-            $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $member)->first();
+            $player = DB::table('players')->where(config('sharedapi.pid'), $member)->first();
             if (is_null($player))
             {
                 $giveback[$count] = "ERRROR NO PLAYER";

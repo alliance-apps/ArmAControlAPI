@@ -97,7 +97,7 @@ class VehicleController extends Controller
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $changed = ($vehicle->alive != 1);
         DB::table('vehicles')->where('id', $vid)->update(['alive' => 1]);
-        $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $vehicle->pid)->first();
+        $player = DB::table('players')->where(config('sharedapi.pid'), $vehicle->pid)->first();
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
@@ -111,7 +111,7 @@ class VehicleController extends Controller
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
         $changed = ($vehicle->active != 0);
         DB::table('vehicles')->where('id', $vid)->update(['active' => 0]);
-        $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $vehicle->pid)->first();
+        $player = DB::table('players')->where(config('sharedapi.pid'), $vehicle->pid)->first();
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
@@ -124,7 +124,7 @@ class VehicleController extends Controller
     {
         DB::table('vehicles')->where('id', $vid)->update(['alive' => 0]);
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
-        $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $vehicle->pid)->first();
+        $player = DB::table('players')->where(config('sharedapi.pid'), $vehicle->pid)->first();
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
@@ -135,7 +135,7 @@ class VehicleController extends Controller
     public function editVehicle(Request $request, $vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
-        $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $vehicle->pid)->first();
+        $player = DB::table('players')->where(config('sharedapi.pid'), $vehicle->pid)->first();
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
@@ -184,7 +184,7 @@ class VehicleController extends Controller
     public function sideAndGarageChangeVehicle(Request $request, $vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
-        $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $vehicle->pid)->first();
+        $player = DB::table('players')->where(config('sharedapi.pid'), $vehicle->pid)->first();
         $playerid = $player->uid;
 
         $toLog['vid'] = $vid;
@@ -204,10 +204,10 @@ class VehicleController extends Controller
     public function changeVehicleOwner(Request $request, $vid)
     {
         $vehicle = DB::table('vehicles')->where('id', $vid)->first();
-        $player = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $vehicle->pid)->first();
+        $player = DB::table('players')->where(config('sharedapi.pid'), $vehicle->pid)->first();
         $preowner = $player->uid;
 
-        $player2 = DB::table('players')->where(env('TABLE_PLAYERS_PID', 'pid'), $request->newowner)->first();
+        $player2 = DB::table('players')->where(config('sharedapi.pid'), $request->newowner)->first();
         $newowner = $player2->uid;
 
         $toLog['vid'] = $vid;
