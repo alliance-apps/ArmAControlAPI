@@ -33,7 +33,7 @@ class sharedApi
         $payload = $request->db;
         $db = Crypt::decrypt($payload);
         $db = json_decode($db);
-        dd($db);
+
         config(['database.connections.mysql.host' => $db->host]);
         config(['database.connections.mysql.database' => $db->database]);
         config(['database.connections.mysql.username' => $db->username]);
