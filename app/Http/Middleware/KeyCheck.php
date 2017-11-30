@@ -17,7 +17,7 @@ class KeyCheck
     {
         if($request->key != config('auth.apikey'))
         {
-            die('ArmA Control Altis Life RESTful API v1.1 (2017-07-27)<br>Developed by Tim Vogler ("cat24max")<br>Distributed by AllianceApps.de');
+            die('ArmA Control Altis Life RESTful API v1.3 (2017-11-30)<br>Developed by Tim Vogler ("cat24max")<br>Distributed by AllianceApps.de');
         }
         else
         {
