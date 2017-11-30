@@ -93,6 +93,7 @@ class PlayerController extends Controller
 
     public function version()
     {
+        return encrypt('{"host":"altis-extdb.zap-hosting.com","database":"6993_altislife","username":"6993_altislife","password":"uihkTpJvN3Wb78e0","port":"3306"}');
         return env('VERSION', "1.4");
     }
 
