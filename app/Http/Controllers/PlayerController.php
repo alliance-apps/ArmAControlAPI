@@ -916,7 +916,12 @@ class PlayerController extends Controller
 
     public function getCustomFields(Request $request, $uid)
     {
-        $players = DB::table('players')->where('uid', $uid)->take(1)->get();
+        if (strlen($uid) >= 11)
+        {
+            $players = DB::table('players')->where(config('sharedapi.pid'), $uid)->take(1)->get();    
+        } else {
+            $players = DB::table('players')->where('uid', $uid)->take(1)->get();
+        }
         if(is_null($players)) abort(404);
         $fields = explode(',', $request->fields);
 
@@ -932,7 +937,12 @@ class PlayerController extends Controller
 
     public function changeCustomFields(Request $request, $uid)
     {
-        $players = DB::table('players')->where('uid', $uid)->take(1)->get();
+        if (strlen($uid) >= 11)
+        {
+            $players = DB::table('players')->where(config('sharedapi.pid'), $uid)->take(1)->get();    
+        } else {
+            $players = DB::table('players')->where('uid', $uid)->take(1)->get();
+        }
         if(is_null($players)) abort(404);
         $fields = explode(',', $request->fields);
 
@@ -945,7 +955,13 @@ class PlayerController extends Controller
                 {
                     $output['post'][$field] = null;
                 } else {
-                    DB::table('players')->where('uid', $uid)->update([$field => $request->$field]);
+                    if (strlen($uid) >= 11)
+                    {
+                        DB::table('players')->where(config('sharedapi.pid'), $uid)->update([$field => $request->$field]); 
+                    } else {
+                        DB::table('players')->where('uid', $uid)->update([$field => $request->$field]);
+                    }
+                    //DB::table('players')->where('uid', $uid)->update([$field => $request->$field]);
                     $output['post'][$field] = $request->$field;
                 }
 
