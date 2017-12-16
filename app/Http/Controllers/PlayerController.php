@@ -371,27 +371,19 @@ class PlayerController extends Controller
                 $output[$count]['opfor_gear'] = $player->$opfg;
             }
             $output[$count]['stats']['enabled'] = true;
+            $output[$count]['stats']['civ'][0] = 0;
+            $output[$count]['stats']['civ'][1] = 0;
+            $output[$count]['stats']['civ'][2] = 0;
             $output[$count]['stats']['civ'] = $this->threePartMREStoArray($player->civ_stats, true);
-            if(!isset($output[$count]['stats']['civ'][2]))
-            {
-                $output[$count]['stats']['civ'][0] = 0;
-                $output[$count]['stats']['civ'][1] = 0;
-                $output[$count]['stats']['civ'][2] = 0;
-            }
+            $output[$count]['stats']['cop'][0] = 0;
+            $output[$count]['stats']['cop'][1] = 0;
+            $output[$count]['stats']['cop'][2] = 0;
             $output[$count]['stats']['cop'] = $this->threePartMREStoArray($player->cop_stats, true);
-            if(!isset($output[$count]['stats']['cop'][2]))
-            {
-                $output[$count]['stats']['cop'][0] = 0;
-                $output[$count]['stats']['cop'][1] = 0;
-                $output[$count]['stats']['cop'][2] = 0;
-            }
+            $output[$count]['stats']['med'][0] = 0;
+            $output[$count]['stats']['med'][1] = 0;
+            $output[$count]['stats']['med'][2] = 0;
             $output[$count]['stats']['med'] = $this->threePartMREStoArray($player->med_stats, true);
-            if(!isset($output[$count]['stats']['med'][2]))
-            {
-                $output[$count]['stats']['med'][0] = 0;
-                $output[$count]['stats']['med'][1] = 0;
-                $output[$count]['stats']['med'][2] = 0;
-            }
+            
             $output[$count]['pos']['enabled'] = true;
             $output[$count]['pos']['civ'] = $this->threePartMREStoArray($player->civ_position, false);
             if (env('TABLE_PLAYERS_TIMESTAMPS', true))
