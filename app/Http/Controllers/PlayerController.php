@@ -77,6 +77,12 @@ class PlayerController extends Controller
                 $arr[$count] = intval($a);
                 $count++;
             }
+            
+            if($count == 1)
+            {
+                $arr[2] = 0;
+            }
+            
         }
         return $arr;
     }
