@@ -346,9 +346,17 @@ class PlayerController extends Controller
                 $playtime = str_replace('"[', '', $player->playtime);
                 $playtime = str_replace(']"', '', $playtime);
                 $playtime = explode(',', $playtime);
-                $output[$count]['playtime']['civ'] = intval($playtime[2]);
-                $output[$count]['playtime']['cop'] = intval($playtime[0]);
-                $output[$count]['playtime']['med'] = intval($playtime[1]);
+                try {
+                    $output[$count]['playtime']['civ'] = intval($playtime[2]);
+                    $output[$count]['playtime']['cop'] = intval($playtime[0]);
+                    $output[$count]['playtime']['med'] = intval($playtime[1]);
+                } catch (\Exception $e)
+                {
+                    $output[$count]['playtime']['civ'] = 0;
+                    $output[$count]['playtime']['cop'] = 0;
+                    $output[$count]['playtime']['med'] = 0;
+                }
+
             }
             $output[$count]['civ_licenses'] = $this->convertLicenseMREStoArray($player->civ_licenses);
             $output[$count]['cop_licenses'] = $this->convertLicenseMREStoArray($player->cop_licenses);
