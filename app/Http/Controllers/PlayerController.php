@@ -290,7 +290,13 @@ class PlayerController extends Controller
         $count = 0;
         foreach ($player as $player)
         {
-            $output[$count]['uid'] = $player->uid;
+            try {
+                $output[$count]['uid'] = $player->uid;
+            } catch (\Exception $e)
+                {
+                    $output[$count]['uid'] = $player->id;
+                }
+            
             $output[$count]['name'] = $player->name;
             $output[$count]['aliases'] = str_replace('`]"', '',str_replace('"[`', '', $player->aliases));
             $pid = config('sharedapi.pid');
