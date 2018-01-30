@@ -41,7 +41,7 @@ class PlayerController extends Controller
 
     function convertLicenseMREStoArray($licensestring)
     {
-        if($licensestring == '"[]"')
+        if($licensestring == '"[]"' || $licensestring == '[]')
         {
             return null;
         }
