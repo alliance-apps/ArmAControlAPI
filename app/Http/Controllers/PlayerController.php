@@ -586,9 +586,9 @@ class PlayerController extends Controller
         $return['donor'] = intval(end($type));
 
         $return['opfor'] = -1;
-        if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+        if (config('sharedapi.opfor_enabled'))
         {
-            $type = DB::select("SHOW COLUMNS FROM players WHERE Field = '".env('TABLE_PLAYERS_OPFOR')."'")[0]->Type;
+            $type = DB::select("SHOW COLUMNS FROM players WHERE Field = '".config('sharedapi.opfor_level')."'")[0]->Type;
             preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
             $type = explode("','", $matches[1]);
             $return['opfor'] = intval(end($type));
@@ -637,9 +637,9 @@ class PlayerController extends Controller
         $Gear['cop']['pre'] = $player->cop_gear;
         $Gear['med']['pre'] = $player->med_gear;
         $Gear['opfor']['pre'] = '"[]"';
-        if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+        if (config('sharedapi.opfor_enabled'))
         {
-            $opfg = env('TABLE_PLAYERS_OPFOR_GEAR');
+            $opfg = config('sharedapi.opfor_gear');
             $Gear['opfor']['pre'] = $player->$opfg;
         }
 
@@ -676,7 +676,7 @@ class PlayerController extends Controller
             $players = DB::table('players')->where('uid', $uid)->update(['med_gear' => $Gear['med']['post']]);
         }
         $Gear['opfor']['changed'] = false;
-        if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+        if (config('sharedapi.opfor_enabled'))
         {
             if($Gear['opfor']['pre'] == $Gear['opfor']['post'])
             {
@@ -685,7 +685,7 @@ class PlayerController extends Controller
                 unset($Gear['opfor']['post']);
             } else {
                 $Gear['opfor']['changed'] = true;
-                $players = DB::table('players')->where('uid', $uid)->update([env('TABLE_PLAYERS_OPFOR_GEAR') => $Gear['opfor']['post']]);
+                $players = DB::table('players')->where('uid', $uid)->update([config('sharedapi.opfor_gear') => $Gear['opfor']['post']]);
             }
         }
 
@@ -702,9 +702,9 @@ class PlayerController extends Controller
         $level['cop']['pre'] = $player->coplevel;
         $level['med']['pre'] = $player->mediclevel;
         $level['opfor']['pre'] = 0;
-        if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+        if (config('sharedapi.opfor_enabled'))
         {
-            $opfor = env('TABLE_PLAYERS_OPFOR');
+            $opfor = config('sharedapi.opfor_level');
             $level['opfor']['pre'] = $player->$opfor;
         }
 
@@ -750,11 +750,11 @@ class PlayerController extends Controller
                 $level['opfor']['changed'] = false;
                 unset($level['opfor']['pre']);
             } else {
-                if (env('TABLE_PLAYERS_OPFOR_ENABLED', false))
+                if (config('sharedapi.opfor_enabled'))
                 {
                     $level['opfor']['post'] = $request->opfor;
                     $level['opfor']['changed'] = true;
-                    DB::table('players')->where('uid', $uid)->update([env('TABLE_PLAYERS_OPFOR') => $level['opfor']['post']]);
+                    DB::table('players')->where('uid', $uid)->update([config('sharedapi.opfor_level') => $level['opfor']['post']]);
                 } else {
                     $level['opfor']['post'] = $request->opfor;
                     $level['opfor']['changed'] = false;

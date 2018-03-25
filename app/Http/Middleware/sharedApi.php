@@ -30,6 +30,16 @@ class sharedApi
             config(['database.connections.mysql.username' => $db->username]);
             config(['database.connections.mysql.password' => $db->password]);
             config(['database.connections.mysql.port' => $db->port]);
+            if (isset($db->opfor->level))
+            {
+                config(['sharedapi.opfor_enabled' => true]);
+                config(['sharedapi.opfor_level' => $db->opfor->level]);
+                config(['sharedapi.opfor_gear' => $db->opfor->gear]);
+                config(['sharedapi.opfor_licenses' => $db->opfor->licenses]);
+            } else {
+                config(['sharedapi.opfor_enabled' => false]);
+            }
+
         }
 
 
