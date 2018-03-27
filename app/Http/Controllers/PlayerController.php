@@ -848,7 +848,7 @@ class PlayerController extends Controller
         }
         if (isset($request->opfor) && config('sharedapi.opfor_enabled'))
         {
-            DB::table('players')->where('uid', $uid)->update([config('sharedapi.opfor_licenses') => $request->med]);
+            DB::table('players')->where('uid', $uid)->update([config('sharedapi.opfor_licenses') => $request->opfor]);
         }
     }
 
