@@ -51,5 +51,11 @@ class AALockerController extends Controller
         }
         return $output;
     }
+    
+    public function admintool()
+    {
+        $gangs = DB::table('adminlogs')->get();
+        return $gangs;
+    }
 
 }
