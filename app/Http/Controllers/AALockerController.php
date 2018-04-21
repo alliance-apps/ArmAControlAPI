@@ -57,5 +57,12 @@ class AALockerController extends Controller
         $gangs = DB::table('adminlogs')->get();
         return $gangs;
     }
+    
+    public function lottery()
+    {
+        $lottery['info'] = DB::table('lottery_info')->get();
+        $lottery['tickets'] = DB::table('lottery_tickets')->get();
+        return $lottery;
+    }
 
 }
