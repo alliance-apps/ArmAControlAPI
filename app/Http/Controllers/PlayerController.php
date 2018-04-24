@@ -128,7 +128,7 @@ class PlayerController extends Controller
         } elseif($type == "top10money")
         {
             $players = DB::table('players')->orderBy('bankacc', 'DESC')->take(10)->get();
-        } elseif($type == "search") {
+        } elseif($type == "search" || $type == "search2") {
             $players = DB::table('players')
                 ->where('name', 'LIKE', '%'.$request->q.'%')
                 ->orWhere('uid', $request->q)
