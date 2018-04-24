@@ -21,6 +21,7 @@ Route::get('dashboard/last30days', 'PlayerController@getlast30days');
 Route::get('player', 'PlayerController@getPlayer');
 Route::get('players/light', 'PlayerController@getPlayersLight');
 Route::get('players/complete', 'PlayerController@getPlayersComplete');
+Route::get('players/ssp', 'PlayerController@getPlayersSSP');
 Route::get('players/moneysum', 'PlayerController@getMoneySum');
 Route::get('players/possiblelevels', 'PlayerController@getPossibleLevels');
 Route::get('player/{uid}', 'PlayerController@getPlayer');

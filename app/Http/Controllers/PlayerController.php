@@ -265,6 +265,74 @@ class PlayerController extends Controller
 
 
 
+    public function getPlayersSSP()
+    {
+        $players = DB::table('players')->select('uid', 'name', 'pid', 'cash', 'bankacc', 'coplevel', 'mediclevel');
+        return datatables()->of($players)->toJson();
+
+
+
+
+        $output = [];
+        $count = 0;
+        foreach ($players as $player)
+        {
+            $output[$count]['uid'] = $player->uid;
+            $output[$count]['name'] = $player->name;
+            $pid = config('sharedapi.pid');
+            $output[$count]['pid'] = $player->$pid;
+
+            if ($type != "search")
+            {
+                $output[$count]['aliases'] = str_replace('`]"', '',str_replace('"[`', '', $player->aliases));
+                $output[$count]['cash'] = $player->cash;
+                $output[$count]['bank'] = $player->bankacc;
+                $output[$count]['coplevel'] = intval($player->coplevel);
+                $output[$count]['mediclevel'] = intval($player->mediclevel);
+                $output[$count]['adminlevel'] = intval($player->adminlevel);
+                $output[$count]['donorlevel'] = intval($player->donorlevel);
+                $output[$count]['opforlevel']['enabled'] = config('sharedapi.opfor_enabled');
+                if (config('sharedapi.opfor_enabled'))
+                {
+                    $opfor = config('sharedapi.opfor_level');
+                    $output[$count]['opforlevel'] = intval($player->$opfor);
+                }
+                $output[$count]['arrested'] = intval($player->arrested);
+                $output[$count]['playtime']['enabled'] = env('TABLE_PLAYERS_PLAYTIME_ENABLED', true);
+                if (env('TABLE_PLAYERS_PLAYTIME_ENABLED', true))
+                {
+                    try {
+                        $playtime = str_replace('"[', '', $player->playtime);
+                        $playtime = str_replace(']"', '', $playtime);
+                        $playtime = explode(',', $playtime);
+                        $output[$count]['playtime']['civ'] = intval($playtime[2]);
+                        $output[$count]['playtime']['cop'] = intval($playtime[0]);
+                        $output[$count]['playtime']['med'] = intval($playtime[1]);
+                    } catch (\Exception $e) {
+                        $output[$count]['playtime']['civ'] = 0;
+                        $output[$count]['playtime']['cop'] = 0;
+                        $output[$count]['playtime']['med'] = 0;
+                    }
+
+                }
+                if (env('TABLE_PLAYERS_TIMESTAMPS', true))
+                {
+                    $output[$count]['insert_time'] = $player->insert_time;
+                    $output[$count]['last_seen'] = $player->last_seen;
+                } else {
+                    $output[$count]['insert_time'] = '0000-00-00 00:00:00';
+                    $output[$count]['last_seen'] = '0000-00-00 00:00:00';
+                }
+            }
+
+            $count++;
+        }
+        return $output;
+    }
+
+
+
+
 
 
 

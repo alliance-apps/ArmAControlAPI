@@ -19,7 +19,10 @@
 
 namespace Doctrine\DBAL\Driver;
 
+use Doctrine\DBAL\ParameterType;
 use PDO;
+use function count;
+use function func_get_args;
 
 /**
  * PDO implementation of the Connection interface.
@@ -39,21 +42,11 @@ class PDOConnection extends PDO implements Connection, ServerInfoAwareConnection
      */
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
-
-        //ini_set("default_socket_timeout", 5);
         try {
             parent::__construct($dsn, $user, $password, $options);
             $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, ['Doctrine\DBAL\Driver\PDOStatement', []]);
             $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->setAttribute(PDO::ATTR_TIMEOUT, 5);
         } catch (\PDOException $exception) {
-
-            $output['error'] = true;
-            $output['errorType'] = 'mysql';
-            $output['mysqlError'] = $exception->getMessage();
-            $output['test'] = $password;
-            $json = json_encode($output);
-            die($json);
             throw new PDOException($exception);
         }
     }
@@ -120,7 +113,7 @@ class PDOConnection extends PDO implements Connection, ServerInfoAwareConnection
     /**
      * {@inheritdoc}
      */
-    public function quote($input, $type = \PDO::PARAM_STR)
+    public function quote($input, $type = ParameterType::STRING)
     {
         return parent::quote($input, $type);
     }
