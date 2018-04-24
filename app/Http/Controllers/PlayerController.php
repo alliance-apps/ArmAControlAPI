@@ -268,8 +268,7 @@ class PlayerController extends Controller
 
     public function getPlayersSSP()
     {
-        $players = DB::table('players')->select('uid', 'name', 'pid', 'cash', 'bankacc', 'coplevel', 'mediclevel');
-        return DataTables::of($players)->toJson();
+        return DataTables::of(DB::table('players'))->toJson();
 
 
 
