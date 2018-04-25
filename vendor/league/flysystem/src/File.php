@@ -2,9 +2,6 @@
 
 namespace League\Flysystem;
 
-/**
- * @deprecated
- */
 class File extends Handler
 {
     /**
@@ -20,7 +17,7 @@ class File extends Handler
     /**
      * Read the file.
      *
-     * @return string|false file contents
+     * @return string file contents
      */
     public function read()
     {
@@ -30,7 +27,7 @@ class File extends Handler
     /**
      * Read the file as a stream.
      *
-     * @return resource|false file stream
+     * @return resource file stream
      */
     public function readStream()
     {
@@ -146,7 +143,7 @@ class File extends Handler
     /**
      * Get the file's timestamp.
      *
-     * @return string|false The timestamp or false on failure.
+     * @return int unix timestamp
      */
     public function getTimestamp()
     {
@@ -156,7 +153,7 @@ class File extends Handler
     /**
      * Get the file's mimetype.
      *
-     * @return string|false The file mime-type or false on failure.
+     * @return string mimetime
      */
     public function getMimetype()
     {
@@ -166,7 +163,7 @@ class File extends Handler
     /**
      * Get the file's visibility.
      *
-     * @return string|false The visibility (public|private) or false on failure.
+     * @return string visibility
      */
     public function getVisibility()
     {
@@ -176,7 +173,7 @@ class File extends Handler
     /**
      * Get the file's metadata.
      *
-     * @return array|false The file metadata or false on failure.
+     * @return array
      */
     public function getMetadata()
     {
@@ -186,7 +183,7 @@ class File extends Handler
     /**
      * Get the file size.
      *
-     * @return int|false The file size or false on failure.
+     * @return int file size
      */
     public function getSize()
     {

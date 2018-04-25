@@ -32,7 +32,7 @@ class SQLiteGrammar extends Grammar
      */
     protected $operators = [
         '=', '<', '>', '<=', '>=', '<>', '!=',
-        'like', 'not like', 'ilike',
+        'like', 'not like', 'between', 'ilike',
         '&', '|', '<<', '>>',
     ];
 
@@ -112,18 +112,6 @@ class SQLiteGrammar extends Grammar
     protected function whereYear(Builder $query, $where)
     {
         return $this->dateBasedWhere('%Y', $query, $where);
-    }
-
-    /**
-     * Compile a "where time" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereTime(Builder $query, $where)
-    {
-        return $this->dateBasedWhere('%H:%M:%S', $query, $where);
     }
 
     /**

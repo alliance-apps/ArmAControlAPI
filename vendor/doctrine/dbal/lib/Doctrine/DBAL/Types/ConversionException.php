@@ -29,15 +29,6 @@
  */
 namespace Doctrine\DBAL\Types;
 
-use function get_class;
-use function gettype;
-use function implode;
-use function is_object;
-use function is_scalar;
-use function sprintf;
-use function strlen;
-use function substr;
-
 class ConversionException extends \Doctrine\DBAL\DBALException
 {
     /**
@@ -48,7 +39,7 @@ class ConversionException extends \Doctrine\DBAL\DBALException
      *
      * @return \Doctrine\DBAL\Types\ConversionException
      */
-    public static function conversionFailed($value, $toType)
+    static public function conversionFailed($value, $toType)
     {
         $value = (strlen($value) > 32) ? substr($value, 0, 20) . '...' : $value;
 
@@ -66,7 +57,7 @@ class ConversionException extends \Doctrine\DBAL\DBALException
      *
      * @return \Doctrine\DBAL\Types\ConversionException
      */
-    public static function conversionFailedFormat($value, $toType, $expectedFormat, \Exception $previous = null)
+    static public function conversionFailedFormat($value, $toType, $expectedFormat, \Exception $previous = null)
     {
         $value = (strlen($value) > 32) ? substr($value, 0, 20) . '...' : $value;
 
@@ -87,7 +78,7 @@ class ConversionException extends \Doctrine\DBAL\DBALException
      *
      * @return \Doctrine\DBAL\Types\ConversionException
      */
-    public static function conversionFailedInvalidType($value, $toType, array $possibleTypes)
+    static public function conversionFailedInvalidType($value, $toType, array $possibleTypes)
     {
         $actualType = is_object($value) ? get_class($value) : gettype($value);
 
@@ -109,7 +100,7 @@ class ConversionException extends \Doctrine\DBAL\DBALException
         ));
     }
 
-    public static function conversionFailedSerialization($value, $format, $error)
+    static public function conversionFailedSerialization($value, $format, $error)
     {
         $actualType = is_object($value) ? get_class($value) : gettype($value);
 

@@ -178,7 +178,7 @@ class Builder
      */
     public $operators = [
         '=', '<', '>', '<=', '>=', '<>', '!=', '<=>',
-        'like', 'like binary', 'not like', 'ilike',
+        'like', 'like binary', 'not like', 'between', 'ilike',
         '&', '|', '^', '<<', '>>',
         'rlike', 'regexp', 'not regexp',
         '~', '~*', '!~', '!~*', 'similar to',
@@ -257,7 +257,7 @@ class Builder
         if ($query instanceof Closure) {
             $callback = $query;
 
-            $callback($query = $this->forSubQuery());
+            $callback($query = $this->newQuery());
         }
 
         // Here, we will parse this query into an SQL string and an array of bindings
@@ -480,7 +480,7 @@ class Builder
      * Add a basic where clause to the query.
      *
      * @param  string|array|\Closure  $column
-     * @param  mixed   $operator
+     * @param  string|null  $operator
      * @param  mixed   $value
      * @param  string  $boolean
      * @return $this
@@ -583,7 +583,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function prepareValueAndOperator($value, $operator, $useDefault = false)
+    protected function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
         if ($useDefault) {
             return [$operator, '='];
@@ -631,10 +631,6 @@ class Builder
      */
     public function orWhere($column, $operator = null, $value = null)
     {
-        list($value, $operator) = $this->prepareValueAndOperator(
-            $value, $operator, func_num_args() == 2
-        );
-
         return $this->where($column, $operator, $value, 'or');
     }
 
@@ -824,7 +820,7 @@ class Builder
         // To create the exists sub-select, we will actually create a query and call the
         // provided callback with the query so the developer may set any of the query
         // conditions they want for the in clause, then we'll put it in this array.
-        call_user_func($callback, $query = $this->forSubQuery());
+        call_user_func($callback, $query = $this->newQuery());
 
         $this->wheres[] = compact('type', 'column', 'query', 'boolean');
 
@@ -989,10 +985,6 @@ class Builder
      */
     public function orWhereDate($column, $operator, $value)
     {
-        list($value, $operator) = $this->prepareValueAndOperator(
-            $value, $operator, func_num_args() == 2
-        );
-
         return $this->whereDate($column, $operator, $value, 'or');
     }
 
@@ -1020,10 +1012,6 @@ class Builder
      */
     public function orWhereTime($column, $operator, $value)
     {
-        list($value, $operator) = $this->prepareValueAndOperator(
-            $value, $operator, func_num_args() == 2
-        );
-
         return $this->whereTime($column, $operator, $value, 'or');
     }
 
@@ -1095,9 +1083,7 @@ class Builder
     {
         $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
 
-        if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
-        }
+        $this->addBinding($value, 'where');
 
         return $this;
     }
@@ -1162,7 +1148,7 @@ class Builder
         // Once we have the query instance we can simply execute it so it can add all
         // of the sub-select's conditions to itself, and then we can cache it off
         // in the array of where clauses for the "main" parent query instance.
-        call_user_func($callback, $query = $this->forSubQuery());
+        call_user_func($callback, $query = $this->newQuery());
 
         $this->wheres[] = compact(
             'type', 'column', 'operator', 'query', 'boolean'
@@ -1183,7 +1169,7 @@ class Builder
      */
     public function whereExists(Closure $callback, $boolean = 'and', $not = false)
     {
-        $query = $this->forSubQuery();
+        $query = $this->newQuery();
 
         // Similar to the sub-select clause, we will create a new query instance so
         // the developer may cleanly specify the entire exists query and we will
@@ -1236,7 +1222,7 @@ class Builder
      * @param  bool  $not
      * @return $this
      */
-    public function addWhereExistsQuery(self $query, $boolean = 'and', $not = false)
+    public function addWhereExistsQuery(Builder $query, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotExists' : 'Exists';
 
@@ -1785,9 +1771,9 @@ class Builder
             return 0;
         } elseif (is_object($results[0])) {
             return (int) $results[0]->aggregate;
+        } else {
+            return (int) array_change_key_case((array) $results[0])['aggregate'];
         }
-
-        return (int) array_change_key_case((array) $results[0])['aggregate'];
     }
 
     /**
@@ -1956,16 +1942,6 @@ class Builder
         }
 
         return false;
-    }
-
-    /**
-     * Determine if no rows exist for the current query.
-     *
-     * @return bool
-     */
-    public function doesntExist()
-    {
-        return ! $this->exists();
     }
 
     /**
@@ -2248,9 +2224,7 @@ class Builder
         }
 
         return $this->connection->delete(
-            $this->grammar->compileDelete($this), $this->cleanBindings(
-                $this->grammar->prepareBindingsForDelete($this->bindings)
-            )
+            $this->grammar->compileDelete($this), $this->getBindings()
         );
     }
 
@@ -2274,16 +2248,6 @@ class Builder
     public function newQuery()
     {
         return new static($this->connection, $this->grammar, $this->processor);
-    }
-
-    /**
-     * Create a new query instance for a sub-query.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    protected function forSubQuery()
-    {
-        return $this->newQuery();
     }
 
     /**
@@ -2367,7 +2331,7 @@ class Builder
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return $this
      */
-    public function mergeBindings(self $query)
+    public function mergeBindings(Builder $query)
     {
         $this->bindings = array_merge_recursive($this->bindings, $query->bindings);
 
@@ -2432,13 +2396,13 @@ class Builder
     /**
      * Clone the query without the given properties.
      *
-     * @param  array  $properties
+     * @param  array  $except
      * @return static
      */
-    public function cloneWithout(array $properties)
+    public function cloneWithout(array $except)
     {
-        return tap(clone $this, function ($clone) use ($properties) {
-            foreach ($properties as $property) {
+        return tap(clone $this, function ($clone) use ($except) {
+            foreach ($except as $property) {
                 $clone->{$property} = null;
             }
         });

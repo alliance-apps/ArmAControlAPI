@@ -3,6 +3,7 @@
 namespace Illuminate\Session;
 
 use Illuminate\Support\Manager;
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 
 class SessionManager extends Manager
 {
@@ -164,9 +165,9 @@ class SessionManager extends Manager
     {
         if ($this->app['config']['session.encrypt']) {
             return $this->buildEncryptedSession($handler);
+        } else {
+            return new Store($this->app['config']['session.cookie'], $handler);
         }
-
-        return new Store($this->app['config']['session.cookie'], $handler);
     }
 
     /**

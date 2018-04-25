@@ -37,7 +37,7 @@ interface DriverException extends \Throwable
      * Returns null if no driver specific error code is available
      * for the error raised by the driver.
      *
-     * @return int|string|null
+     * @return integer|string|null
      */
     public function getErrorCode();
 

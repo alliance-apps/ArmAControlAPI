@@ -52,7 +52,7 @@ abstract class Relation
      *
      * @var array
      */
-    public static $morphMap = [];
+    protected static $morphMap = [];
 
     /**
      * Create a new relation instance.
@@ -174,7 +174,7 @@ abstract class Relation
      */
     public function rawUpdate(array $attributes = [])
     {
-        return $this->query->withoutGlobalScopes()->update($attributes);
+        return $this->query->update($attributes);
     }
 
     /**
@@ -188,7 +188,7 @@ abstract class Relation
     {
         return $this->getRelationExistenceQuery(
             $query, $parentQuery, new Expression('count(*)')
-        )->setBindings([], 'select');
+        );
     }
 
     /**
@@ -315,7 +315,7 @@ abstract class Relation
 
         if (is_array($map)) {
             static::$morphMap = $merge && static::$morphMap
-                            ? $map + static::$morphMap : $map;
+                            ? array_merge(static::$morphMap, $map) : $map;
         }
 
         return static::$morphMap;
@@ -347,8 +347,8 @@ abstract class Relation
     public static function getMorphedModel($alias)
     {
         return array_key_exists($alias, self::$morphMap)
-                        ? self::$morphMap[$alias]
-                        : null;
+            ? self::$morphMap[$alias]
+            : null;
     }
 
     /**

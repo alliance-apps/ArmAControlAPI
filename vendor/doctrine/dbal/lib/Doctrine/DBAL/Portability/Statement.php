@@ -19,12 +19,7 @@
 
 namespace Doctrine\DBAL\Portability;
 
-use Doctrine\DBAL\FetchMode;
-use Doctrine\DBAL\ParameterType;
-use function array_change_key_case;
-use function is_null;
-use function is_string;
-use function rtrim;
+use PDO;
 
 /**
  * Portability wrapper for a Statement.
@@ -36,7 +31,7 @@ use function rtrim;
 class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
 {
     /**
-     * @var int
+     * @var integer
      */
     private $portability;
 
@@ -46,14 +41,14 @@ class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
     private $stmt;
 
     /**
-     * @var int
+     * @var integer
      */
     private $case;
 
     /**
-     * @var int
+     * @var integer
      */
-    private $defaultFetchMode = FetchMode::MIXED;
+    private $defaultFetchMode = PDO::FETCH_BOTH;
 
     /**
      * Wraps <tt>Statement</tt> and applies portability measures.
@@ -71,15 +66,15 @@ class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
     /**
      * {@inheritdoc}
      */
-    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null)
+    public function bindParam($column, &$variable, $type = null, $length = null)
     {
         return $this->stmt->bindParam($column, $variable, $type, $length);
     }
-
     /**
      * {@inheritdoc}
      */
-    public function bindValue($param, $value, $type = ParameterType::STRING)
+
+    public function bindValue($param, $value, $type = null)
     {
         return $this->stmt->bindValue($param, $value, $type);
     }
@@ -153,12 +148,10 @@ class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
 
         $row = $this->stmt->fetch($fetchMode);
 
-        $iterateRow = $this->portability & (Connection::PORTABILITY_EMPTY_TO_NULL|Connection::PORTABILITY_RTRIM);
-        $fixCase    = ! is_null($this->case)
-            && ($fetchMode === FetchMode::ASSOCIATIVE || $fetchMode === FetchMode::MIXED)
-            && ($this->portability & Connection::PORTABILITY_FIX_CASE);
-
-        $row = $this->fixRow($row, $iterateRow, $fixCase);
+        $row = $this->fixRow($row,
+            $this->portability & (Connection::PORTABILITY_EMPTY_TO_NULL|Connection::PORTABILITY_RTRIM),
+            !is_null($this->case) && ($fetchMode == PDO::FETCH_ASSOC || $fetchMode == PDO::FETCH_BOTH) && ($this->portability & Connection::PORTABILITY_FIX_CASE)
+        );
 
         return $row;
     }
@@ -177,17 +170,14 @@ class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
         }
 
         $iterateRow = $this->portability & (Connection::PORTABILITY_EMPTY_TO_NULL|Connection::PORTABILITY_RTRIM);
-        $fixCase    = ! is_null($this->case)
-            && ($fetchMode === FetchMode::ASSOCIATIVE || $fetchMode === FetchMode::MIXED)
-            && ($this->portability & Connection::PORTABILITY_FIX_CASE);
-
+        $fixCase = !is_null($this->case) && ($fetchMode == PDO::FETCH_ASSOC || $fetchMode == PDO::FETCH_BOTH) && ($this->portability & Connection::PORTABILITY_FIX_CASE);
         if ( ! $iterateRow && !$fixCase) {
             return $rows;
         }
 
-        if ($fetchMode === FetchMode::COLUMN) {
+        if ($fetchMode === PDO::FETCH_COLUMN) {
             foreach ($rows as $num => $row) {
-                $rows[$num] = [$row];
+                $rows[$num] = array($row);
             }
         }
 
@@ -195,7 +185,7 @@ class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
             $rows[$num] = $this->fixRow($row, $iterateRow, $fixCase);
         }
 
-        if ($fetchMode === FetchMode::COLUMN) {
+        if ($fetchMode === PDO::FETCH_COLUMN) {
             foreach ($rows as $num => $row) {
                 $rows[$num] = $row[0];
             }
@@ -205,9 +195,9 @@ class Statement implements \IteratorAggregate, \Doctrine\DBAL\Driver\Statement
     }
 
     /**
-     * @param mixed $row
-     * @param int   $iterateRow
-     * @param bool  $fixCase
+     * @param mixed   $row
+     * @param integer $iterateRow
+     * @param boolean $fixCase
      *
      * @return array
      */

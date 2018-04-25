@@ -23,29 +23,28 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Sequence;
-use function array_merge;
 
 class CreateSchemaSqlCollector extends AbstractVisitor
 {
     /**
      * @var array
      */
-    private $createNamespaceQueries = [];
+    private $createNamespaceQueries = array();
 
     /**
      * @var array
      */
-    private $createTableQueries = [];
+    private $createTableQueries = array();
 
     /**
      * @var array
      */
-    private $createSequenceQueries = [];
+    private $createSequenceQueries = array();
 
     /**
      * @var array
      */
-    private $createFkConstraintQueries = [];
+    private $createFkConstraintQueries = array();
 
     /**
      *
@@ -102,10 +101,10 @@ class CreateSchemaSqlCollector extends AbstractVisitor
      */
     public function resetQueries()
     {
-        $this->createNamespaceQueries = [];
-        $this->createTableQueries = [];
-        $this->createSequenceQueries = [];
-        $this->createFkConstraintQueries = [];
+        $this->createNamespaceQueries = array();
+        $this->createTableQueries = array();
+        $this->createSequenceQueries = array();
+        $this->createFkConstraintQueries = array();
     }
 
     /**

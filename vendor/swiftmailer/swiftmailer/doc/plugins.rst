@@ -228,7 +228,7 @@ you'll be sending the message to.
         foreach ($users as $user) {
           $replacements[$user['email']] = [
             '{username}'=>$user['username'],
-            '{resetcode}'=>$user['resetcode']
+            '{password}'=>$user['password']
           ];
         }
 
@@ -244,11 +244,11 @@ and then register it with the Mailer. Do this only once!
 When you create your message, replace elements in the body (and/or the subject
 line) with your placeholders::
 
-    $message = (new Swift_Message())
+    $message = new Swift_Message()
       ->setSubject('Important notice for {username}')
       ->setBody(
-        "Hello {username}, you requested to reset your password.\n" .
-        "Please visit https://example.com/pwreset and use the reset code {resetcode} to set a new password."
+        "Hello {username}, we have reset your password to {password}\n" .
+        "Please log in and change it at your earliest convenience."
       )
       ;
 
@@ -265,8 +265,8 @@ this to one user:
 
     Subject: Important notice for smilingsunshine2009
 
-    Hello smilingsunshine2009,you requested to reset your password.
-    Please visit https://example.com/pwreset and use the reset code 183457 to set a new password.
+    Hello smilingsunshine2009, we have reset your password to rainyDays
+    Please log in and change it at your earliest convenience.
 
 While another use may receive the message as:
 
@@ -274,8 +274,8 @@ While another use may receive the message as:
 
     Subject: Important notice for billy-bo-bob
 
-    Hello billy-bo-bob, you requested to reset your password.
-    Please visit https://example.com/pwreset and use the reset code 539127 to set a new password.
+    Hello billy-bo-bob, we have reset your password to dancingOctopus
+    Please log in and change it at your earliest convenience.
 
 While the decorator plugin provides a means to solve this problem, there are
 various ways you could tackle this problem without the need for a plugin. We're
@@ -304,17 +304,17 @@ provide an implementation that does this. You need to create a small class::
 
     class DbReplacements implements Swift_Plugins_Decorator_Replacements {
       public function getReplacementsFor($address) {
-        global $db; // Your PDO instance with a connection to your database
-        $query = $db->prepare(
-          "SELECT * FROM `users` WHERE `email` = ?"
+        $sql = sprintf(
+          "SELECT * FROM user WHERE email = '%s'",
+          mysql_real_escape_string($address)
         );
 
-        $query->execute([$address]);
+        $result = mysql_query($sql);
 
-        if ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        if ($row = mysql_fetch_assoc($result)) {
           return [
             '{username}'=>$row['username'],
-            '{resetcode}'=>$row['resetcode']
+            '{password}'=>$row['password']
           ];
         }
       }

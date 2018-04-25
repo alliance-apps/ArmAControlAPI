@@ -23,12 +23,14 @@ class SQLiteBuilder extends Builder
     }
 
     /**
-     * Empty the database file.
+     * Delete the database file & re-create it.
      *
      * @return void
      */
     public function refreshDatabaseFile()
     {
-        file_put_contents($this->connection->getDatabaseName(), '');
+        unlink($this->connection->getDatabaseName());
+
+        touch($this->connection->getDatabaseName());
     }
 }

@@ -34,10 +34,6 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
      */
     protected function matches($other)
     {
-        if ($this->expectedMessage === '') {
-            return $other->getMessage() === '';
-        }
-
         return strpos($other->getMessage(), $this->expectedMessage) !== false;
     }
 
@@ -53,13 +49,6 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
      */
     protected function failureDescription($other)
     {
-        if ($this->expectedMessage === '') {
-            return sprintf(
-                "exception message is empty but is '%s'",
-                $other->getMessage()
-            );
-        }
-
         return sprintf(
             "exception message '%s' contains '%s'",
             $other->getMessage(),
@@ -72,10 +61,6 @@ class PHPUnit_Framework_Constraint_ExceptionMessage extends PHPUnit_Framework_Co
      */
     public function toString()
     {
-        if ($this->expectedMessage === '') {
-            return 'exception message is empty';
-        }
-
         return 'exception message contains ';
     }
 }

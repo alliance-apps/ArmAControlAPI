@@ -5,28 +5,35 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 
 /**
+ * ProjectUrlMatcher.
+ *
  * This class has been auto-generated
  * by the Symfony Routing Component.
  */
 class ProjectUrlMatcher extends Symfony\Component\Routing\Tests\Fixtures\RedirectableUrlMatcher
 {
+    /**
+     * Constructor.
+     */
     public function __construct(RequestContext $context)
     {
         $this->context = $context;
     }
 
-    public function match($rawPathinfo)
+    public function match($pathinfo)
     {
         $allow = array();
-        $pathinfo = rawurldecode($rawPathinfo);
+        $pathinfo = rawurldecode($pathinfo);
         $trimmedPathinfo = rtrim($pathinfo, '/');
         $context = $this->context;
-        $request = $this->request ?: $this->createRequest($pathinfo);
+        $request = $this->request;
         $requestMethod = $canonicalMethod = $context->getMethod();
+        $scheme = $context->getScheme();
 
         if ('HEAD' === $requestMethod) {
             $canonicalMethod = 'GET';
         }
+
 
         if (0 === strpos($pathinfo, '/a')) {
             // a_first
@@ -47,161 +54,103 @@ class ProjectUrlMatcher extends Symfony\Component\Routing\Tests\Fixtures\Redirec
         }
 
         // a_wildcard
-        if (preg_match('#^/(?P<param>[^/]++)$#sD', $pathinfo, $matches)) {
+        if (preg_match('#^/(?P<param>[^/]++)$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'a_wildcard')), array ());
         }
 
         if (0 === strpos($pathinfo, '/a')) {
             // a_fourth
             if ('/a/44' === $trimmedPathinfo) {
-                $ret = array('_route' => 'a_fourth');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_a_fourth;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'a_fourth'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'a_fourth');
                 }
 
-                return $ret;
+                return array('_route' => 'a_fourth');
             }
-            not_a_fourth:
 
             // a_fifth
             if ('/a/55' === $trimmedPathinfo) {
-                $ret = array('_route' => 'a_fifth');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_a_fifth;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'a_fifth'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'a_fifth');
                 }
 
-                return $ret;
+                return array('_route' => 'a_fifth');
             }
-            not_a_fifth:
 
             // a_sixth
             if ('/a/66' === $trimmedPathinfo) {
-                $ret = array('_route' => 'a_sixth');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_a_sixth;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'a_sixth'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'a_sixth');
                 }
 
-                return $ret;
+                return array('_route' => 'a_sixth');
             }
-            not_a_sixth:
 
         }
 
         // nested_wildcard
-        if (0 === strpos($pathinfo, '/nested') && preg_match('#^/nested/(?P<param>[^/]++)$#sD', $pathinfo, $matches)) {
+        if (0 === strpos($pathinfo, '/nested') && preg_match('#^/nested/(?P<param>[^/]++)$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'nested_wildcard')), array ());
         }
 
         if (0 === strpos($pathinfo, '/nested/group')) {
             // nested_a
             if ('/nested/group/a' === $trimmedPathinfo) {
-                $ret = array('_route' => 'nested_a');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_nested_a;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'nested_a'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'nested_a');
                 }
 
-                return $ret;
+                return array('_route' => 'nested_a');
             }
-            not_nested_a:
 
             // nested_b
             if ('/nested/group/b' === $trimmedPathinfo) {
-                $ret = array('_route' => 'nested_b');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_nested_b;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'nested_b'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'nested_b');
                 }
 
-                return $ret;
+                return array('_route' => 'nested_b');
             }
-            not_nested_b:
 
             // nested_c
             if ('/nested/group/c' === $trimmedPathinfo) {
-                $ret = array('_route' => 'nested_c');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_nested_c;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'nested_c'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'nested_c');
                 }
 
-                return $ret;
+                return array('_route' => 'nested_c');
             }
-            not_nested_c:
 
         }
 
         elseif (0 === strpos($pathinfo, '/slashed/group')) {
             // slashed_a
             if ('/slashed/group' === $trimmedPathinfo) {
-                $ret = array('_route' => 'slashed_a');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_slashed_a;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'slashed_a'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'slashed_a');
                 }
 
-                return $ret;
+                return array('_route' => 'slashed_a');
             }
-            not_slashed_a:
 
             // slashed_b
             if ('/slashed/group/b' === $trimmedPathinfo) {
-                $ret = array('_route' => 'slashed_b');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_slashed_b;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'slashed_b'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'slashed_b');
                 }
 
-                return $ret;
+                return array('_route' => 'slashed_b');
             }
-            not_slashed_b:
 
             // slashed_c
             if ('/slashed/group/c' === $trimmedPathinfo) {
-                $ret = array('_route' => 'slashed_c');
-                if ('/' === substr($pathinfo, -1)) {
-                    // no-op
-                } elseif ('GET' !== $canonicalMethod) {
-                    goto not_slashed_c;
-                } else {
-                    return array_replace($ret, $this->redirect($rawPathinfo.'/', 'slashed_c'));
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'slashed_c');
                 }
 
-                return $ret;
+                return array('_route' => 'slashed_c');
             }
-            not_slashed_c:
 
-        }
-
-        if ('/' === $pathinfo && !$allow) {
-            throw new Symfony\Component\Routing\Exception\NoConfigurationException();
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();

@@ -4,7 +4,6 @@ namespace Illuminate\Http;
 
 use ArrayObject;
 use JsonSerializable;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
@@ -12,9 +11,7 @@ use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class Response extends BaseResponse
 {
-    use ResponseTrait, Macroable {
-        Macroable::__call as macroCall;
-    }
+    use ResponseTrait;
 
     /**
      * Set the content on the response.

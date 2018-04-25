@@ -167,7 +167,7 @@ class Handler implements ExceptionHandlerContract
     public function render($request, Exception $e)
     {
         if (method_exists($e, 'render') && $response = $e->render($request)) {
-            return Router::toResponse($request, $response);
+            return Router::prepareResponse($request, $response);
         } elseif ($e instanceof Responsable) {
             return $e->toResponse($request);
         }
@@ -198,9 +198,9 @@ class Handler implements ExceptionHandlerContract
         if ($e instanceof ModelNotFoundException) {
             $e = new NotFoundHttpException($e->getMessage(), $e);
         } elseif ($e instanceof AuthorizationException) {
-            $e = new AccessDeniedHttpException($e->getMessage(), $e);
+            $e = new AccessDeniedHttpException($e->getMessage());
         } elseif ($e instanceof TokenMismatchException) {
-            $e = new HttpException(419, $e->getMessage(), $e);
+            $e = new HttpException(419, $e->getMessage());
         }
 
         return $e;
@@ -216,7 +216,7 @@ class Handler implements ExceptionHandlerContract
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         return $request->expectsJson()
-                    ? response()->json(['message' => $exception->getMessage()], 401)
+                    ? response()->json(['message' => 'Unauthenticated.'], 401)
                     : redirect()->guest(route('login'));
     }
 
@@ -365,16 +365,6 @@ class Handler implements ExceptionHandlerContract
 
             $handler->handleUnconditionally(true);
 
-            foreach (config('app.debug_blacklist', []) as $key => $secrets) {
-                foreach ($secrets as $secret) {
-                    $handler->blacklist($key, $secret);
-                }
-            }
-
-            if (config('app.editor', false)) {
-                $handler->setEditor(config('app.editor'));
-            }
-
             $handler->setApplicationPaths(
                 array_flip(Arr::except(
                     array_flip($files->directories(base_path())), [base_path('vendor')]
@@ -393,11 +383,10 @@ class Handler implements ExceptionHandlerContract
     {
         $status = $e->getStatusCode();
 
-        $paths = collect(config('view.paths'));
-
-        view()->replaceNamespace('errors', $paths->map(function ($path) {
-            return "{$path}/errors";
-        })->push(__DIR__.'/views')->all());
+        view()->replaceNamespace('errors', [
+            resource_path('views/errors'),
+            __DIR__.'/views',
+        ]);
 
         if (view()->exists($view = "errors::{$status}")) {
             return response()->view($view, ['exception' => $e], $status, $e->getHeaders());
@@ -460,9 +449,7 @@ class Handler implements ExceptionHandlerContract
             'exception' => get_class($e),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
-            'trace' => collect($e->getTrace())->map(function ($trace) {
-                return Arr::except($trace, ['args']);
-            })->all(),
+            'trace' => $e->getTrace(),
         ] : [
             'message' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
         ];

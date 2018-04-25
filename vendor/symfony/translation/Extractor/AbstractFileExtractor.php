@@ -21,7 +21,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 abstract class AbstractFileExtractor
 {
     /**
-     * @param string|array $resource Files, a file or a directory
+     * @param string|array $resource files, a file or a directory
      *
      * @return array
      */
@@ -43,7 +43,12 @@ abstract class AbstractFileExtractor
         return $files;
     }
 
-    private function toSplFileInfo(string $file): \SplFileInfo
+    /**
+     * @param string $file
+     *
+     * @return \SplFileInfo
+     */
+    private function toSplFileInfo($file)
     {
         return ($file instanceof \SplFileInfo) ? $file : new \SplFileInfo($file);
     }
@@ -72,7 +77,7 @@ abstract class AbstractFileExtractor
     abstract protected function canBeExtracted($file);
 
     /**
-     * @param string|array $resource Files, a file or a directory
+     * @param string|array $resource files, a file or a directory
      *
      * @return array files to be extracted
      */

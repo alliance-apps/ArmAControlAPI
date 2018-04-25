@@ -19,13 +19,8 @@
 
 namespace Doctrine\DBAL\Types;
 
-use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\DBALException;
-use function end;
-use function explode;
-use function get_class;
-use function str_replace;
 
 /**
  * The base class for so-called Doctrine mapping types.
@@ -69,14 +64,14 @@ abstract class Type
      *
      * @var array
      */
-    private static $_typeObjects = [];
+    private static $_typeObjects = array();
 
     /**
      * The map of supported doctrine mapping types.
      *
      * @var array
      */
-    private static $_typesMap = [
+    private static $_typesMap = array(
         self::TARRAY => ArrayType::class,
         self::SIMPLE_ARRAY => SimpleArrayType::class,
         self::JSON_ARRAY => JsonArrayType::class,
@@ -102,7 +97,7 @@ abstract class Type
         self::BLOB => BlobType::class,
         self::GUID => GuidType::class,
         self::DATEINTERVAL => DateIntervalType::class,
-    ];
+    );
 
     /**
      * Prevents instantiation and forces use of the factory method.
@@ -144,7 +139,7 @@ abstract class Type
      *
      * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      *
-     * @return int|null
+     * @return integer|null
      *
      * @todo Needed?
      */
@@ -218,7 +213,7 @@ abstract class Type
      *
      * @param string $name The name of the type.
      *
-     * @return bool TRUE if type is supported; FALSE otherwise.
+     * @return boolean TRUE if type is supported; FALSE otherwise.
      */
     public static function hasType($name)
     {
@@ -252,13 +247,19 @@ abstract class Type
      * Gets the (preferred) binding type for values of this type that
      * can be used when binding parameters to prepared statements.
      *
-     * This method should return one of the {@link \Doctrine\DBAL\ParameterType} constants.
+     * This method should return one of the PDO::PARAM_* constants, that is, one of:
      *
-     * @return int
+     * PDO::PARAM_BOOL
+     * PDO::PARAM_NULL
+     * PDO::PARAM_INT
+     * PDO::PARAM_STR
+     * PDO::PARAM_LOB
+     *
+     * @return integer
      */
     public function getBindingType()
     {
-        return ParameterType::STRING;
+        return \PDO::PARAM_STR;
     }
 
     /**
@@ -290,7 +291,7 @@ abstract class Type
      * {@link convertToPHPValueSQL} works for any type and mostly
      * does nothing. This method can additionally be used for optimization purposes.
      *
-     * @return bool
+     * @return boolean
      */
     public function canRequireSQLConversion()
     {
@@ -332,18 +333,18 @@ abstract class Type
      */
     public function getMappedDatabaseTypes(AbstractPlatform $platform)
     {
-        return [];
+        return array();
     }
 
     /**
      * If this Doctrine Type maps to an already mapped database type,
-     * reverse schema engineering can't tell them apart. You need to mark
+     * reverse schema engineering can't take them apart. You need to mark
      * one of those types as commented, which will have Doctrine use an SQL
      * comment to typehint the actual Doctrine Type.
      *
      * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      *
-     * @return bool
+     * @return boolean
      */
     public function requiresSQLCommentHint(AbstractPlatform $platform)
     {

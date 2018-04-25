@@ -53,13 +53,6 @@ class HasManyThrough extends Relation
     protected $secondLocalKey;
 
     /**
-     * The count of self joins.
-     *
-     * @var int
-     */
-    protected static $selfJoinCount = 0;
-
-    /**
      * Create a new has many through relationship instance.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
@@ -125,7 +118,7 @@ class HasManyThrough extends Relation
      */
     public function getQualifiedParentKeyName()
     {
-        return $this->parent->qualifyColumn($this->secondLocalKey);
+        return $this->parent->getTable().'.'.$this->secondLocalKey;
     }
 
     /**
@@ -185,7 +178,7 @@ class HasManyThrough extends Relation
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
+            if (isset($dictionary[$key = $model->getKey()])) {
                 $model->setRelation(
                     $relation, $this->related->newCollection($dictionary[$key])
                 );
@@ -432,50 +425,21 @@ class HasManyThrough extends Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        if ($parentQuery->getQuery()->from == $query->getQuery()->from) {
-            return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
-        }
-
         $this->performJoin($query);
 
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedLocalKeyName(), '=', $this->getQualifiedFirstKeyName()
+            $this->getExistenceCompareKey(), '=', $this->getQualifiedFirstKeyName()
         );
     }
 
     /**
-     * Add the constraints for a relationship query on the same table.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
-    {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
-
-        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $hash.'.'.$this->secondLocalKey);
-
-        if ($this->throughParentSoftDeletes()) {
-            $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
-        }
-
-        $query->getModel()->setTable($hash);
-
-        return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$query->getModel()->getKeyName(), '=', $this->getQualifiedFirstKeyName()
-        );
-    }
-
-    /**
-     * Get a relationship join table hash.
+     * Get the key for comparing against the parent key in "has" query.
      *
      * @return string
      */
-    public function getRelationCountHash()
+    public function getExistenceCompareKey()
     {
-        return 'laravel_reserved_'.static::$selfJoinCount++;
+        return $this->farParent->getQualifiedKeyName();
     }
 
     /**
@@ -489,32 +453,22 @@ class HasManyThrough extends Relation
     }
 
     /**
-     * Get the qualified foreign key on the "through" model.
-     *
-     * @return string
-     */
-    public function getQualifiedFirstKeyName()
-    {
-        return $this->throughParent->qualifyColumn($this->firstKey);
-    }
-
-    /**
      * Get the qualified foreign key on the related model.
      *
      * @return string
      */
     public function getQualifiedForeignKeyName()
     {
-        return $this->related->qualifyColumn($this->secondKey);
+        return $this->related->getTable().'.'.$this->secondKey;
     }
 
     /**
-     * Get the qualified local key on the far parent model.
+     * Get the qualified foreign key on the "through" model.
      *
      * @return string
      */
-    public function getQualifiedLocalKeyName()
+    public function getQualifiedFirstKeyName()
     {
-        return $this->farParent->qualifyColumn($this->localKey);
+        return $this->throughParent->getTable().'.'.$this->firstKey;
     }
 }

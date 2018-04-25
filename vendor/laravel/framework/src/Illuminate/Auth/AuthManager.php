@@ -65,7 +65,9 @@ class AuthManager implements FactoryContract
     {
         $name = $name ?: $this->getDefaultDriver();
 
-        return $this->guards[$name] ?? $this->guards[$name] = $this->resolve($name);
+        return isset($this->guards[$name])
+                    ? $this->guards[$name]
+                    : $this->guards[$name] = $this->resolve($name);
     }
 
     /**

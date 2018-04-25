@@ -30,8 +30,6 @@ trait DetectsLostConnections
             'Resource deadlock avoided',
             'Transaction() on null',
             'child connection forced to terminate due to client_idle_limit',
-            'query_wait_timeout',
-            'reset by peer',
         ]);
     }
 }

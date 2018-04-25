@@ -266,6 +266,7 @@ class PlayerController extends Controller
 
 
 
+<<<<<<< HEAD
     public function getPlayersSSP()
     {
         return DataTables::of(DB::table('players'))->toJson();
@@ -333,6 +334,8 @@ class PlayerController extends Controller
 
 
 
+=======
+>>>>>>> parent of 4850596... Dependency update
 
 
 

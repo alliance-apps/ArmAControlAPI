@@ -26,19 +26,7 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Sequence;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
-use Doctrine\DBAL\TransactionIsolationLevel;
 use Doctrine\DBAL\Types\BinaryType;
-use function array_merge;
-use function count;
-use function explode;
-use function implode;
-use function preg_match;
-use function sprintf;
-use function str_replace;
-use function strlen;
-use function strpos;
-use function strtoupper;
-use function substr;
 
 /**
  * OraclePlatform.
@@ -59,7 +47,7 @@ class OraclePlatform extends AbstractPlatform
      *
      * @throws DBALException
      */
-    public static function assertValidIdentifier($identifier)
+    static public function assertValidIdentifier($identifier)
     {
         if ( ! preg_match('(^(([a-zA-Z]{1}[a-zA-Z0-9_$#]{0,})|("[^"]+"))$)', $identifier)) {
             throw new DBALException("Invalid Oracle identifier");
@@ -118,15 +106,15 @@ class OraclePlatform extends AbstractPlatform
     protected function getDateArithmeticIntervalExpression($date, $operator, $interval, $unit)
     {
         switch ($unit) {
-            case DateIntervalUnit::MONTH:
-            case DateIntervalUnit::QUARTER:
-            case DateIntervalUnit::YEAR:
+            case self::DATE_INTERVAL_UNIT_MONTH:
+            case self::DATE_INTERVAL_UNIT_QUARTER:
+            case self::DATE_INTERVAL_UNIT_YEAR:
                 switch ($unit) {
-                    case DateIntervalUnit::QUARTER:
+                    case self::DATE_INTERVAL_UNIT_QUARTER:
                         $interval *= 3;
                         break;
 
-                    case DateIntervalUnit::YEAR:
+                    case self::DATE_INTERVAL_UNIT_YEAR:
                         $interval *= 12;
                         break;
                 }
@@ -137,19 +125,19 @@ class OraclePlatform extends AbstractPlatform
                 $calculationClause = '';
 
                 switch ($unit) {
-                    case DateIntervalUnit::SECOND:
+                    case self::DATE_INTERVAL_UNIT_SECOND:
                         $calculationClause = '/24/60/60';
                         break;
 
-                    case DateIntervalUnit::MINUTE:
+                    case self::DATE_INTERVAL_UNIT_MINUTE:
                         $calculationClause = '/24/60';
                         break;
 
-                    case DateIntervalUnit::HOUR:
+                    case self::DATE_INTERVAL_UNIT_HOUR:
                         $calculationClause = '/24';
                         break;
 
-                    case DateIntervalUnit::WEEK:
+                    case self::DATE_INTERVAL_UNIT_WEEK:
                         $calculationClause = '*7';
                         break;
                 }
@@ -256,12 +244,12 @@ class OraclePlatform extends AbstractPlatform
     protected function _getTransactionIsolationLevelSQL($level)
     {
         switch ($level) {
-            case TransactionIsolationLevel::READ_UNCOMMITTED:
+            case \Doctrine\DBAL\Connection::TRANSACTION_READ_UNCOMMITTED:
                 return 'READ UNCOMMITTED';
-            case TransactionIsolationLevel::READ_COMMITTED:
+            case \Doctrine\DBAL\Connection::TRANSACTION_READ_COMMITTED:
                 return 'READ COMMITTED';
-            case TransactionIsolationLevel::REPEATABLE_READ:
-            case TransactionIsolationLevel::SERIALIZABLE:
+            case \Doctrine\DBAL\Connection::TRANSACTION_REPEATABLE_READ:
+            case \Doctrine\DBAL\Connection::TRANSACTION_SERIALIZABLE:
                 return 'SERIALIZABLE';
             default:
                 return parent::_getTransactionIsolationLevelSQL($level);
@@ -396,11 +384,11 @@ class OraclePlatform extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    protected function _getCreateTableSQL($table, array $columns, array $options = [])
+    protected function _getCreateTableSQL($table, array $columns, array $options = array())
     {
-        $indexes            = $options['indexes'] ?? [];
-        $options['indexes'] = [];
-        $sql                = parent::_getCreateTableSQL($table, $columns, $options);
+        $indexes = isset($options['indexes']) ? $options['indexes'] : array();
+        $options['indexes'] = array();
+        $sql = parent::_getCreateTableSQL($table, $columns, $options);
 
         foreach ($columns as $name => $column) {
             if (isset($column['sequence'])) {
@@ -495,9 +483,9 @@ class OraclePlatform extends AbstractPlatform
     }
 
     /**
-     * @param string $name
-     * @param string $table
-     * @param int    $start
+     * @param string  $name
+     * @param string  $table
+     * @param integer $start
      *
      * @return array
      */
@@ -511,11 +499,11 @@ class OraclePlatform extends AbstractPlatform
         $quotedName = $nameIdentifier->getQuotedName($this);
         $unquotedName = $nameIdentifier->getName();
 
-        $sql = [];
+        $sql = array();
 
         $autoincrementIdentifierName = $this->getAutoincrementIdentifierName($tableIdentifier);
 
-        $idx = new Index($autoincrementIdentifierName, [$quotedName], true, true);
+        $idx = new Index($autoincrementIdentifierName, array($quotedName), true, true);
 
         $sql[] = 'DECLARE
   constraints_Count NUMBER;
@@ -574,11 +562,11 @@ END;';
             ''
         );
 
-        return [
+        return array(
             'DROP TRIGGER ' . $autoincrementIdentifierName,
             $this->getDropSequenceSQL($identitySequenceName),
             $this->getDropConstraintSQL($autoincrementIdentifierName, $table->getQuotedName($this)),
-        ];
+        );
     }
 
     /**
@@ -776,11 +764,11 @@ END;';
      */
     public function getAlterTableSQL(TableDiff $diff)
     {
-        $sql = [];
-        $commentsSQL = [];
-        $columnSql = [];
+        $sql = array();
+        $commentsSQL = array();
+        $columnSql = array();
 
-        $fields = [];
+        $fields = array();
 
         foreach ($diff->addedColumns as $column) {
             if ($this->onSchemaAlterTableAddColumn($column, $diff, $columnSql)) {
@@ -801,7 +789,7 @@ END;';
             $sql[] = 'ALTER TABLE ' . $diff->getName($this)->getQuotedName($this) . ' ADD (' . implode(', ', $fields) . ')';
         }
 
-        $fields = [];
+        $fields = array();
         foreach ($diff->changedColumns as $columnDiff) {
             if ($this->onSchemaAlterTableChangeColumn($columnDiff, $diff, $columnSql)) {
                 continue;
@@ -859,7 +847,7 @@ END;';
                 ' RENAME COLUMN ' . $oldColumnName->getQuotedName($this) .' TO ' . $column->getQuotedName($this);
         }
 
-        $fields = [];
+        $fields = array();
         foreach ($diff->removedColumns as $column) {
             if ($this->onSchemaAlterTableRemoveColumn($column, $diff, $columnSql)) {
                 continue;
@@ -872,7 +860,7 @@ END;';
             $sql[] = 'ALTER TABLE ' . $diff->getName($this)->getQuotedName($this) . ' DROP (' . implode(', ', $fields).')';
         }
 
-        $tableSql = [];
+        $tableSql = array();
 
         if ( ! $this->onSchemaAlterTable($diff, $tableSql)) {
             $sql = array_merge($sql, $commentsSQL);
@@ -930,7 +918,7 @@ END;';
             $oldIndexName = $schema . '.' . $oldIndexName;
         }
 
-        return ['ALTER INDEX ' . $oldIndexName . ' RENAME TO ' . $index->getQuotedName($this)];
+        return array('ALTER INDEX ' . $oldIndexName . ' RENAME TO ' . $index->getQuotedName($this));
     }
 
     /**
@@ -998,7 +986,7 @@ END;';
                 $query .= " FROM dual";
             }
 
-            $columns = ['a.*'];
+            $columns = array('a.*');
 
             if ($offset > 0) {
                 $columns[] = 'ROWNUM AS doctrine_rownum';
@@ -1128,7 +1116,7 @@ END;';
      */
     protected function initializeDoctrineTypeMappings()
     {
-        $this->doctrineTypeMapping = [
+        $this->doctrineTypeMapping = array(
             'integer'           => 'integer',
             'number'            => 'integer',
             'pls_integer'       => 'boolean',
@@ -1152,7 +1140,7 @@ END;';
             'rowid'             => 'string',
             'urowid'            => 'string',
             'blob'              => 'blob',
-        ];
+        );
     }
 
     /**

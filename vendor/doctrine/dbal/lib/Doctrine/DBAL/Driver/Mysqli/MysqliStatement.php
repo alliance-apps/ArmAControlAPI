@@ -20,14 +20,7 @@
 namespace Doctrine\DBAL\Driver\Mysqli;
 
 use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\Driver\StatementIterator;
-use Doctrine\DBAL\FetchMode;
-use Doctrine\DBAL\ParameterType;
-use function array_combine;
-use function array_fill;
-use function call_user_func_array;
-use function count;
-use function str_repeat;
+use PDO;
 
 /**
  * @author Kim Hemsø Rasmussen <kimhemsoe@gmail.com>
@@ -38,13 +31,11 @@ class MysqliStatement implements \IteratorAggregate, Statement
      * @var array
      */
     protected static $_paramTypeMap = [
-        ParameterType::STRING       => 's',
-        ParameterType::BOOLEAN      => 'i',
-        ParameterType::NULL         => 's',
-        ParameterType::INTEGER      => 'i',
-
-        // TODO Support LOB bigger then max package size
-        ParameterType::LARGE_OBJECT => 's',
+        PDO::PARAM_STR => 's',
+        PDO::PARAM_BOOL => 'i',
+        PDO::PARAM_NULL => 's',
+        PDO::PARAM_INT => 'i',
+        PDO::PARAM_LOB => 's' // TODO Support LOB bigger then max package size.
     ];
 
     /**
@@ -85,9 +76,9 @@ class MysqliStatement implements \IteratorAggregate, Statement
     protected $_values = [];
 
     /**
-     * @var int
+     * @var integer
      */
-    protected $_defaultFetchMode = FetchMode::MIXED;
+    protected $_defaultFetchMode = PDO::FETCH_BOTH;
 
     /**
      * Indicates whether the statement is in the state when fetching results is possible
@@ -120,7 +111,7 @@ class MysqliStatement implements \IteratorAggregate, Statement
     /**
      * {@inheritdoc}
      */
-    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null)
+    public function bindParam($column, &$variable, $type = null, $length = null)
     {
         if (null === $type) {
             $type = 's';
@@ -141,7 +132,7 @@ class MysqliStatement implements \IteratorAggregate, Statement
     /**
      * {@inheritdoc}
      */
-    public function bindValue($param, $value, $type = ParameterType::STRING)
+    public function bindValue($param, $value, $type = null)
     {
         if (null === $type) {
             $type = 's';
@@ -235,7 +226,7 @@ class MysqliStatement implements \IteratorAggregate, Statement
      *
      * @param array $values
      *
-     * @return bool
+     * @return boolean
      */
     private function _bindValues($values)
     {
@@ -251,7 +242,7 @@ class MysqliStatement implements \IteratorAggregate, Statement
     }
 
     /**
-     * @return bool|array
+     * @return boolean|array
      */
     private function _fetch()
     {
@@ -280,12 +271,6 @@ class MysqliStatement implements \IteratorAggregate, Statement
             return false;
         }
 
-        $fetchMode = $fetchMode ?: $this->_defaultFetchMode;
-
-        if ($fetchMode === FetchMode::COLUMN) {
-            return $this->fetchColumn();
-        }
-
         $values = $this->_fetch();
         if (null === $values) {
             return false;
@@ -295,20 +280,22 @@ class MysqliStatement implements \IteratorAggregate, Statement
             throw new MysqliException($this->_stmt->error, $this->_stmt->sqlstate, $this->_stmt->errno);
         }
 
+        $fetchMode = $fetchMode ?: $this->_defaultFetchMode;
+
         switch ($fetchMode) {
-            case FetchMode::NUMERIC:
+            case PDO::FETCH_NUM:
                 return $values;
 
-            case FetchMode::ASSOCIATIVE:
+            case PDO::FETCH_ASSOC:
                 return array_combine($this->_columnNames, $values);
 
-            case FetchMode::MIXED:
+            case PDO::FETCH_BOTH:
                 $ret = array_combine($this->_columnNames, $values);
                 $ret += $values;
 
                 return $ret;
 
-            case FetchMode::STANDARD_OBJECT:
+            case PDO::FETCH_OBJ:
                 $assoc = array_combine($this->_columnNames, $values);
                 $ret = new \stdClass();
 
@@ -331,8 +318,7 @@ class MysqliStatement implements \IteratorAggregate, Statement
         $fetchMode = $fetchMode ?: $this->_defaultFetchMode;
 
         $rows = [];
-
-        if ($fetchMode === FetchMode::COLUMN) {
+        if (PDO::FETCH_COLUMN == $fetchMode) {
             while (($row = $this->fetchColumn()) !== false) {
                 $rows[] = $row;
             }
@@ -350,13 +336,12 @@ class MysqliStatement implements \IteratorAggregate, Statement
      */
     public function fetchColumn($columnIndex = 0)
     {
-        $row = $this->fetch(FetchMode::NUMERIC);
-
+        $row = $this->fetch(PDO::FETCH_NUM);
         if (false === $row) {
             return false;
         }
 
-        return $row[$columnIndex] ?? null;
+        return isset($row[$columnIndex]) ? $row[$columnIndex] : null;
     }
 
     /**
@@ -421,6 +406,8 @@ class MysqliStatement implements \IteratorAggregate, Statement
      */
     public function getIterator()
     {
-        return new StatementIterator($this);
+        $data = $this->fetchAll();
+
+        return new \ArrayIterator($data);
     }
 }

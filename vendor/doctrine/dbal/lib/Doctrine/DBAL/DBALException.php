@@ -23,14 +23,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Driver\ExceptionConverterDriver;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use function array_map;
-use function bin2hex;
-use function implode;
-use function is_resource;
-use function is_string;
-use function json_encode;
-use function sprintf;
-use function str_split;
 
 class DBALException extends \Exception
 {
@@ -140,14 +132,14 @@ class DBALException extends \Exception
     }
 
     /**
-     * @param \Doctrine\DBAL\Driver $driver
-     * @param \Exception            $driverEx
-     * @param string                $sql
-     * @param array                 $params
+     * @param \Doctrine\DBAL\Driver     $driver
+     * @param \Exception $driverEx
+     * @param string     $sql
+     * @param array      $params
      *
      * @return \Doctrine\DBAL\DBALException
      */
-    public static function driverExceptionDuringQuery(Driver $driver, \Exception $driverEx, $sql, array $params = [])
+    public static function driverExceptionDuringQuery(Driver $driver, \Exception $driverEx, $sql, array $params = array())
     {
         $msg = "An exception occurred while executing '".$sql."'";
         if ($params) {
@@ -159,8 +151,8 @@ class DBALException extends \Exception
     }
 
     /**
-     * @param \Doctrine\DBAL\Driver $driver
-     * @param \Exception            $driverEx
+     * @param \Doctrine\DBAL\Driver     $driver
+     * @param \Exception $driverEx
      *
      * @return \Doctrine\DBAL\DBALException
      */
@@ -170,8 +162,8 @@ class DBALException extends \Exception
     }
 
     /**
-     * @param \Doctrine\DBAL\Driver $driver
-     * @param \Exception            $driverEx
+     * @param \Doctrine\DBAL\Driver     $driver
+     * @param \Exception $driverEx
      *
      * @return \Doctrine\DBAL\DBALException
      */
@@ -198,10 +190,6 @@ class DBALException extends \Exception
     private static function formatParameters(array $params)
     {
         return '[' . implode(', ', array_map(function ($param) {
-            if (is_resource($param)) {
-                return (string) $param;
-            }
-            
             $json = @json_encode($param);
 
             if (! is_string($json) || $json == 'null' && is_string($param)) {

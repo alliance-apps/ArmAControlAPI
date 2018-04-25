@@ -3,15 +3,12 @@
 namespace Doctrine\DBAL\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use function substr;
 
 /**
  * Type that maps interval string to a PHP DateInterval Object.
  */
 class DateIntervalType extends Type
 {
-    public const FORMAT = '%RP%YY%MM%DDT%HH%IM%SS';
-
     /**
      * {@inheritdoc}
      */
@@ -41,7 +38,7 @@ class DateIntervalType extends Type
         }
 
         if ($value instanceof \DateInterval) {
-            return $value->format(self::FORMAT);
+            return $value->format('P%YY%MM%DDT%HH%IM%SS');
         }
 
         throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', 'DateInterval']);
@@ -56,23 +53,10 @@ class DateIntervalType extends Type
             return $value;
         }
 
-        $negative = false;
-
-        if (isset($value[0]) && ($value[0] === '+' || $value[0] === '-')) {
-            $negative = $value[0] === '-';
-            $value    = substr($value, 1);
-        }
-
         try {
-            $interval = new \DateInterval($value);
-
-            if ($negative) {
-                $interval->invert = 1;
-            }
-
-            return $interval;
+            return new \DateInterval($value);
         } catch (\Exception $exception) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), self::FORMAT, $exception);
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'P%YY%MM%DDT%HH%IM%SS', $exception);
         }
     }
 

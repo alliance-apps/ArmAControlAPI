@@ -23,7 +23,6 @@ use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\SqliteSchemaManager;
-use function strpos;
 
 /**
  * Abstract base implementation of the {@link Doctrine\DBAL\Driver} interface for SQLite based drivers.
@@ -97,7 +96,7 @@ abstract class AbstractSQLiteDriver implements Driver, ExceptionConverterDriver
     {
         $params = $conn->getParams();
 
-        return $params['path'] ?? null;
+        return isset($params['path']) ? $params['path'] : null;
     }
 
     /**

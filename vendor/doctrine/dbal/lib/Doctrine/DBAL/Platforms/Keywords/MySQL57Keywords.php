@@ -43,7 +43,7 @@ class MySQL57Keywords extends MySQLKeywords
      */
     protected function getKeywords()
     {
-        return [
+        return array(
             'ACCESSIBLE',
             'ADD',
             'ALL',
@@ -279,6 +279,6 @@ class MySQL57Keywords extends MySQLKeywords
             'XOR',
             'YEAR_MONTH',
             'ZEROFILL',
-        ];
+        );
     }
 }

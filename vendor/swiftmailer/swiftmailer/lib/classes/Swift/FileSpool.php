@@ -95,7 +95,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         $fileName = $this->path.'/'.$this->getRandomString(10);
         for ($i = 0; $i < $this->retryLimit; ++$i) {
             /* We try an exclusive creation of the file. This is an atomic operation, it avoid locking mechanism */
-            $fp = @fopen($fileName.'.message', 'xb');
+            $fp = @fopen($fileName.'.message', 'x');
             if (false !== $fp) {
                 if (false === fwrite($fp, $ser)) {
                     return false;
@@ -200,7 +200,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         $ret = '';
         $strlen = strlen($base);
         for ($i = 0; $i < $count; ++$i) {
-            $ret .= $base[random_int(0, $strlen - 1)];
+            $ret .= $base[((int) rand(0, $strlen - 1))];
         }
 
         return $ret;
