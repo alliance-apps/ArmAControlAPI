@@ -431,8 +431,19 @@ class PlayerController extends Controller
 
             }
             $output[$count]['civ_licenses'] = $this->convertLicenseMREStoArray($player->civ_licenses);
-            $output[$count]['cop_licenses'] = $this->convertLicenseMREStoArray($player->cop_licenses);
-            $output[$count]['med_licenses'] = $this->convertLicenseMREStoArray($player->med_licenses);
+            try {
+                $output[$count]['cop_licenses'] = $this->convertLicenseMREStoArray($player->cop_licenses);
+                $output[$count]['med_licenses'] = $this->convertLicenseMREStoArray($player->med_licenses);
+                $output[$count]['cop_licenses_string'] = $player->cop_licenses;
+                $output[$count]['med_licenses_string'] = $player->med_licenses;
+            } catch(\ErrorException $e) {
+                $output[$count]['cop_licenses'] = null;
+                $output[$count]['med_licenses'] = null;
+                $output[$count]['cop_licenses_string'] = "";
+                $output[$count]['med_licenses_string'] = "";
+            }
+                
+            
             $output[$count]['opfor_licenses'] = null;
             $output[$count]['opfor_licenses_string'] = null;
             if (config('sharedapi.opfor_enabled'))
@@ -443,8 +454,7 @@ class PlayerController extends Controller
             }
 
             $output[$count]['civ_licenses_string'] = $player->civ_licenses;
-            $output[$count]['cop_licenses_string'] = $player->cop_licenses;
-            $output[$count]['med_licenses_string'] = $player->med_licenses;
+            
 
             $output[$count]['newgear'] = env('NEW_GEAR', false);
             $output[$count]['civ_gear'] = $player->civ_gear;
@@ -907,11 +917,19 @@ class PlayerController extends Controller
         }
         if (isset($request->cop))
         {
-            DB::table('players')->where('uid', $uid)->update(['cop_licenses' => $request->cop]);
+            try {
+                DB::table('players')->where('uid', $uid)->update(['cop_licenses' => $request->cop]);
+            } catch (\Exception $e) {
+                   
+            }
         }
         if (isset($request->med))
         {
-            DB::table('players')->where('uid', $uid)->update(['med_licenses' => $request->med]);
+            try {
+                DB::table('players')->where('uid', $uid)->update(['med_licenses' => $request->med]);
+            } catch (\Exception $e) {
+                   
+            }
         }
         if (isset($request->opfor) && config('sharedapi.opfor_enabled'))
         {
