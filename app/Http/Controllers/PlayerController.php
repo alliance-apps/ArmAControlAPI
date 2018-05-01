@@ -490,6 +490,12 @@ class PlayerController extends Controller
                 $output[$count]['insert_time'] = '0000-00-00 00:00:00';
                 $output[$count]['last_seen'] = '0000-00-00 00:00:00';
             }
+            try {
+                $output[$count]['aa_gangid'] = $player->gang_id;
+            } catch (\Exception $e)
+            {
+                $output[$count]['aa_gangid'] = null;
+            }
             $count++;
         }
         return $output[0];
