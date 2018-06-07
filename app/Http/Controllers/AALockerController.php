@@ -163,8 +163,12 @@ class AALockerController extends Controller
             $output['east']['level'] = $gang->level;
             $output['east']['side'] = $gang->side;
         }
-        return $output;
-        
+        return $output;   
+    }
+    
+    public function lockerUnlock($steamid, Request $request)
+    {
+        $civ = DB::table('locker')->where('uid', $steamid)->where('side', $request->side)->update(["open" => 1]);
     }
     
     public function admintool()
