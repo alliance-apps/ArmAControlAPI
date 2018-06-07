@@ -38,7 +38,8 @@ class AALockerController extends Controller
             $output['owner'] = $gang->uid;
             $output['active'] = $gang->active;
             $output['open'] = $gang->open;
-            $output['updated_at'] = $gang->locker_timechange;
+            $output['created_at'] = $gang->created_at;
+            $output['updated_at'] = $gang->updated_at;
             $output['dbprimary'] = $this->convertMREStoArray($gang->locker_dbprimaer);
             $output['dbhandgun'] = $this->convertMREStoArray($gang->locker_dbpistole);
             $output['dbacc'] = $this->convertMREStoArray($gang->locker_dbaufsaetze);
@@ -48,8 +49,104 @@ class AALockerController extends Controller
             $output['misc'] = $this->convertMREStoArray($gang->locker_sonstiges);
             $output['items'] = $this->convertMREStoArray($gang->locker_items);
             $output['virtitems'] = $this->convertMREStoArray($gang->locker_virtitems);
+            $output['level'] = $gang->level;
+            $output['side'] = $gang->side;
         }
         return $output;
+    }
+    
+    public function lockerForPlayer($steamid)
+    {
+        $output['civ'] = null;
+        $output['west'] = null;
+        $output['guer'] = null;
+        $output['east'] = null;
+        $civ = DB::table('locker')->where('uid', $steamid)->where('side', 'CIV')->get();
+        foreach($civ as $gang)
+        {
+            $output['civ']['id'] = $gang->id;
+            $output['civ']['owner'] = $gang->uid;
+            $output['civ']['active'] = $gang->active;
+            $output['civ']['open'] = $gang->open;
+            $output['civ']['created_at'] = $gang->created_at;
+            $output['civ']['updated_at'] = $gang->updated_at;
+            $output['civ']['dbprimary'] = $this->convertMREStoArray($gang->locker_dbprimaer);
+            $output['civ']['dbhandgun'] = $this->convertMREStoArray($gang->locker_dbpistole);
+            $output['civ']['dbacc'] = $this->convertMREStoArray($gang->locker_dbaufsaetze);
+            $output['civ']['clothes'] = $this->convertMREStoArray($gang->locker_kleidung);
+            $output['civ']['vests'] = $this->convertMREStoArray($gang->locker_westen);
+            $output['civ']['backpack'] = $this->convertMREStoArray($gang->locker_backpack);
+            $output['civ']['misc'] = $this->convertMREStoArray($gang->locker_sonstiges);
+            $output['civ']['items'] = $this->convertMREStoArray($gang->locker_items);
+            $output['civ']['virtitems'] = $this->convertMREStoArray($gang->locker_virtitems);
+            $output['civ']['level'] = $gang->level;
+            $output['civ']['side'] = $gang->side;
+        }
+        $civ = DB::table('locker')->where('uid', $steamid)->where('side', 'WEST')->get();
+        foreach($civ as $gang)
+        {
+            $output['west']['id'] = $gang->id;
+            $output['west']['owner'] = $gang->uid;
+            $output['west']['active'] = $gang->active;
+            $output['west']['open'] = $gang->open;
+            $output['west']['created_at'] = $gang->created_at;
+            $output['west']['updated_at'] = $gang->updated_at;
+            $output['west']['dbprimary'] = $this->convertMREStoArray($gang->locker_dbprimaer);
+            $output['west']['dbhandgun'] = $this->convertMREStoArray($gang->locker_dbpistole);
+            $output['west']['dbacc'] = $this->convertMREStoArray($gang->locker_dbaufsaetze);
+            $output['west']['clothes'] = $this->convertMREStoArray($gang->locker_kleidung);
+            $output['west']['vests'] = $this->convertMREStoArray($gang->locker_westen);
+            $output['west']['backpack'] = $this->convertMREStoArray($gang->locker_backpack);
+            $output['west']['misc'] = $this->convertMREStoArray($gang->locker_sonstiges);
+            $output['west']['items'] = $this->convertMREStoArray($gang->locker_items);
+            $output['west']['virtitems'] = $this->convertMREStoArray($gang->locker_virtitems);
+            $output['west']['level'] = $gang->level;
+            $output['west']['side'] = $gang->side;
+        }
+        $civ = DB::table('locker')->where('uid', $steamid)->where('side', 'GUER')->get();
+        foreach($civ as $gang)
+        {
+            $output['guer']['id'] = $gang->id;
+            $output['guer']['owner'] = $gang->uid;
+            $output['guer']['active'] = $gang->active;
+            $output['guer']['open'] = $gang->open;
+            $output['guer']['created_at'] = $gang->created_at;
+            $output['guer']['updated_at'] = $gang->updated_at;
+            $output['guer']['dbprimary'] = $this->convertMREStoArray($gang->locker_dbprimaer);
+            $output['guer']['dbhandgun'] = $this->convertMREStoArray($gang->locker_dbpistole);
+            $output['guer']['dbacc'] = $this->convertMREStoArray($gang->locker_dbaufsaetze);
+            $output['guer']['clothes'] = $this->convertMREStoArray($gang->locker_kleidung);
+            $output['guer']['vests'] = $this->convertMREStoArray($gang->locker_westen);
+            $output['guer']['backpack'] = $this->convertMREStoArray($gang->locker_backpack);
+            $output['guer']['misc'] = $this->convertMREStoArray($gang->locker_sonstiges);
+            $output['guer']['items'] = $this->convertMREStoArray($gang->locker_items);
+            $output['guer']['virtitems'] = $this->convertMREStoArray($gang->locker_virtitems);
+            $output['guer']['level'] = $gang->level;
+            $output['guer']['side'] = $gang->side;
+        }
+        $civ = DB::table('locker')->where('uid', $steamid)->where('side', 'EAST')->get();
+        foreach($civ as $gang)
+        {
+            $output['east']['id'] = $gang->id;
+            $output['east']['owner'] = $gang->uid;
+            $output['east']['active'] = $gang->active;
+            $output['east']['open'] = $gang->open;
+            $output['east']['created_at'] = $gang->created_at;
+            $output['east']['updated_at'] = $gang->updated_at;
+            $output['east']['dbprimary'] = $this->convertMREStoArray($gang->locker_dbprimaer);
+            $output['east']['dbhandgun'] = $this->convertMREStoArray($gang->locker_dbpistole);
+            $output['east']['dbacc'] = $this->convertMREStoArray($gang->locker_dbaufsaetze);
+            $output['east']['clothes'] = $this->convertMREStoArray($gang->locker_kleidung);
+            $output['east']['vests'] = $this->convertMREStoArray($gang->locker_westen);
+            $output['east']['backpack'] = $this->convertMREStoArray($gang->locker_backpack);
+            $output['east']['misc'] = $this->convertMREStoArray($gang->locker_sonstiges);
+            $output['east']['items'] = $this->convertMREStoArray($gang->locker_items);
+            $output['east']['virtitems'] = $this->convertMREStoArray($gang->locker_virtitems);
+            $output['east']['level'] = $gang->level;
+            $output['east']['side'] = $gang->side;
+        }
+        return $output;
+        
     }
     
     public function admintool()
