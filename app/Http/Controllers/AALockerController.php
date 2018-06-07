@@ -13,16 +13,34 @@ class AALockerController extends Controller
         {
             return null;
         }
-        $licensestring = str_replace('"[', '', $licensestring);
-        $licensestring = str_replace(']"', '', $licensestring);
-        $licensestring = str_replace('`', '', $licensestring);
-        $licensearray = explode(',', $licensestring);
-        $count = 0;
-        foreach ($licensearray as $license)
+        if(strpos($licensestring, '"[[') !== false)
         {
+            $licensestring = str_replace('`', '', $licensestring);
+            $licensestring = str_replace('"[[', '', $licensestring);
+            $licensestring = str_replace(']]"', '', $licensestring);
+            $licensestring = explode('],[', $licensestring);
+            $licensearray = [];
+            foreach($licensestring as $license)
+            {
+                $license = explode(',', $license);
+                for ($i = 1; $i <= $license[0]; $i++)
+                {
+                    array_push($licensearray, $license[1]);
+                }
+            }
+            return $licensearray;
+        } else {
+            $licensestring = str_replace('"[', '', $licensestring);
+            $licensestring = str_replace(']"', '', $licensestring);
+            $licensestring = str_replace('`', '', $licensestring);
+            $licensearray = explode(',', $licensestring);
+            $count = 0;
+            foreach ($licensearray as $license)
+            {
 
-            $licenses[$count] = $license;
-            $count++;
+                $licenses[$count] = $license;
+                $count++;
+            }
         }
         return $licensearray;
     }
