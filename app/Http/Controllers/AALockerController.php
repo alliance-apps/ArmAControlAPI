@@ -168,7 +168,7 @@ class AALockerController extends Controller
     
     public function lockerUnlock($steamid, Request $request)
     {
-        $civ = DB::table('locker')->where('uid', $steamid)->where('side', $request->side)->update(["open" => 1]);
+        $civ = DB::table('locker')->where('uid', $steamid)->where('side', $request->side)->update(["open" => 0]);
     }
     
     public function admintool()
