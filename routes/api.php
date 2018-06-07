@@ -67,5 +67,6 @@ Route::get('houses/{pid}', 'HouseController@houselistForPlayer');
 Route::get('house/{id}', 'HouseController@house');
 
 Route::get('allianceapps/locker/list', 'AALockerController@lockerList');
+Route::get('allianceapps/locker/{steamid}', 'AALockerController@lockerForPlayer');
 Route::get('allianceapps/admintool/logs', 'AALockerController@adminTool');
 Route::get('allianceapps/lottery', 'AALockerController@lottery');
