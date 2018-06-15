@@ -22,7 +22,7 @@ class sharedApi
         if (env('SHAREDAPI', false))
         {
             $payload = $request->db;
-            $db = Crypt::decrypt($payload);
+            $db = decrypt($payload);
             $db = json_decode($db);
 
             config(['database.connections.mysql.host' => $db->host]);
