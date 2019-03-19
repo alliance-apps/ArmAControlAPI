@@ -383,6 +383,19 @@ following::
 
     */
 
+Internationalized domains are automatically converted to IDN encoding::
+
+    $to = $message->getHeaders()->get('To');
+    $to->setAddresses('joe@ëxämple.org');
+
+    echo $to->toString();
+
+    /*
+
+    To: joe@xn--xmple-gra1c.org
+
+    */
+
 ID Headers
 ~~~~~~~~~~
 
@@ -407,8 +420,8 @@ HeaderSet's ``addIdHeader()`` method::
     $headers = $message->getHeaders();
     $headers->addIdHeader('Your-Header-Name', '123456.unqiue@example.org');
 
-Changing the value of an existing date header is done by calling its
-``setId()`` method::
+Changing the value of an existing ID header is done by calling its ``setId()``
+method::
 
     $msgId = $message->getHeaders()->get('Message-ID');
     $msgId->setId(time() . '.' . uniqid('thing') . '@example.org');
@@ -438,7 +451,6 @@ You add a new path header to a HeaderSet by calling the HeaderSet's
     $message = new Swift_Message();
     $headers = $message->getHeaders();
     $headers->addPathHeader('Your-Header-Name', 'person@example.org');
-
 
 Changing the value of an existing path header is done by calling its
 ``setAddress()`` method::

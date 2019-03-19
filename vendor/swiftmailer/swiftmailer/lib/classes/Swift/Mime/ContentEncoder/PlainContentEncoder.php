@@ -11,6 +11,10 @@
 /**
  * Handles binary/7/8-bit Transfer Encoding in Swift Mailer.
  *
+ * When sending 8-bit content over SMTP, you should use
+ * Swift_Transport_Esmtp_EightBitMimeHandler to enable the 8BITMIME SMTP
+ * extension.
+ *
  * @author Chris Corbyn
  */
 class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_ContentEncoder
@@ -56,16 +60,14 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
             $string = $this->canonicalize($string);
         }
 
-        return $this->safeWordWrap($string, $maxLineLength, "\r\n");
+        return $this->safeWordwrap($string, $maxLineLength, "\r\n");
     }
 
     /**
      * Encode stream $in to stream $out.
      *
-     * @param Swift_OutputByteStream $os
-     * @param Swift_InputByteStream  $is
-     * @param int                    $firstLineOffset ignored
-     * @param int                    $maxLineLength   optional, 0 means no wrapping will occur
+     * @param int $firstLineOffset ignored
+     * @param int $maxLineLength   optional, 0 means no wrapping will occur
      */
     public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
     {
@@ -75,7 +77,7 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
             if ($this->canonical) {
                 $toencode = $this->canonicalize($toencode);
             }
-            $wrapped = $this->safeWordWrap($toencode, $maxLineLength, "\r\n");
+            $wrapped = $this->safeWordwrap($toencode, $maxLineLength, "\r\n");
             $lastLinePos = strrpos($wrapped, "\r\n");
             $leftOver = substr($wrapped, $lastLinePos);
             $wrapped = substr($wrapped, 0, $lastLinePos);
@@ -121,7 +123,7 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
 
         $originalLines = explode($le, $string);
 
-        $lines = array();
+        $lines = [];
         $lineCount = 0;
 
         foreach ($originalLines as $originalLine) {
@@ -154,8 +156,8 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
     private function canonicalize($string)
     {
         return str_replace(
-            array("\r\n", "\r", "\n"),
-            array("\n", "\n", "\r\n"),
+            ["\r\n", "\r", "\n"],
+            ["\n", "\n", "\r\n"],
             $string
             );
     }
