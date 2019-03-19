@@ -19,20 +19,6 @@ trait Queueable
     public $queue;
 
     /**
-     * The name of the connection the chain should be sent to.
-     *
-     * @var string|null
-     */
-    public $chainConnection;
-
-    /**
-     * The name of the queue the chain should be sent to.
-     *
-     * @var string|null
-     */
-    public $chainQueue;
-
-    /**
      * The number of seconds before the job should be made available.
      *
      * @var \DateTimeInterface|\DateInterval|int|null
@@ -67,34 +53,6 @@ trait Queueable
      */
     public function onQueue($queue)
     {
-        $this->queue = $queue;
-
-        return $this;
-    }
-
-    /**
-     * Set the desired connection for the chain.
-     *
-     * @param  string|null  $connection
-     * @return $this
-     */
-    public function allOnConnection($connection)
-    {
-        $this->chainConnection = $connection;
-        $this->connection = $connection;
-
-        return $this;
-    }
-
-    /**
-     * Set the desired queue for the chain.
-     *
-     * @param  string|null  $queue
-     * @return $this
-     */
-    public function allOnQueue($queue)
-    {
-        $this->chainQueue = $queue;
         $this->queue = $queue;
 
         return $this;
@@ -138,12 +96,6 @@ trait Queueable
         if (! empty($this->chained)) {
             dispatch(tap(unserialize(array_shift($this->chained)), function ($next) {
                 $next->chained = $this->chained;
-
-                $next->onConnection($next->connection ?: $this->chainConnection);
-                $next->onQueue($next->queue ?: $this->chainQueue);
-
-                $next->chainConnection = $this->chainConnection;
-                $next->chainQueue = $this->chainQueue;
             }));
         }
     }

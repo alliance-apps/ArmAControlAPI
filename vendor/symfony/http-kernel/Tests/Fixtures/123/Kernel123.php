@@ -11,14 +11,14 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Fixtures\_123;
 
-use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
 class Kernel123 extends Kernel
 {
     public function registerBundles()
     {
-        return [];
+        return array();
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)

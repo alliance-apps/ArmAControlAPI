@@ -68,19 +68,6 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Call the failed method on the notification instance.
-     *
-     * @param  \Exception  $e
-     * @return void
-     */
-    public function failed($e)
-    {
-        if (method_exists($this->notification, 'failed')) {
-            $this->notification->failed($e);
-        }
-    }
-
-    /**
      * Prepare the instance for cloning.
      *
      * @return void

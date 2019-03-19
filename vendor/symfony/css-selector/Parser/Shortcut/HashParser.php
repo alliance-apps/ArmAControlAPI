@@ -31,7 +31,7 @@ class HashParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse(string $source): array
+    public function parse($source)
     {
         // Matches an optional namespace, optional element, and required id
         // $source = 'test|input#ab6bd_field';
@@ -41,11 +41,11 @@ class HashParser implements ParserInterface
         //     2 => string 'input' (length=5)
         //     3 => string 'ab6bd_field' (length=11)
         if (preg_match('/^(?:([a-z]++)\|)?+([\w-]++|\*)?+#([\w-]++)$/i', trim($source), $matches)) {
-            return [
+            return array(
                 new SelectorNode(new HashNode(new ElementNode($matches[1] ?: null, $matches[2] ?: null), $matches[3])),
-            ];
+            );
         }
 
-        return [];
+        return array();
     }
 }

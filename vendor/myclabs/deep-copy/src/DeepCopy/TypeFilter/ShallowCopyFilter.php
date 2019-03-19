@@ -2,9 +2,6 @@
 
 namespace DeepCopy\TypeFilter;
 
-/**
- * @final
- */
 class ShallowCopyFilter implements TypeFilter
 {
     /**

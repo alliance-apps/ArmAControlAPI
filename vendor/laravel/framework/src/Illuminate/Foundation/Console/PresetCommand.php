@@ -4,9 +4,12 @@ namespace Illuminate\Foundation\Console;
 
 use InvalidArgumentException;
 use Illuminate\Console\Command;
+use Illuminate\Support\Traits\Macroable;
 
 class PresetCommand extends Command
 {
+    use Macroable;
+
     /**
      * The console command signature.
      *

@@ -54,10 +54,10 @@ class InputArgumentTest extends TestCase
 
     public function provideInvalidModes()
     {
-        return [
-            ['ANOTHER_ONE'],
-            [-1],
-        ];
+        return array(
+            array('ANOTHER_ONE'),
+            array(-1),
+        );
     }
 
     public function testIsArray()
@@ -91,8 +91,8 @@ class InputArgumentTest extends TestCase
         $this->assertEquals('another', $argument->getDefault(), '->setDefault() changes the default value');
 
         $argument = new InputArgument('foo', InputArgument::OPTIONAL | InputArgument::IS_ARRAY);
-        $argument->setDefault([1, 2]);
-        $this->assertEquals([1, 2], $argument->getDefault(), '->setDefault() changes the default value');
+        $argument->setDefault(array(1, 2));
+        $this->assertEquals(array(1, 2), $argument->getDefault(), '->setDefault() changes the default value');
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace DeepCopy\TypeMatcher;
 
+/**
+ * TypeMatcher class
+ */
 class TypeMatcher
 {
     /**
@@ -18,8 +21,7 @@ class TypeMatcher
     }
 
     /**
-     * @param mixed $element
-     *
+     * @param $element
      * @return boolean
      */
     public function matches($element)

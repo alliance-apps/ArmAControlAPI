@@ -12,11 +12,11 @@
 namespace Symfony\Component\HttpKernel\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpKernel\Client;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Tests\Fixtures\TestClient;
 
 /**
@@ -60,17 +60,22 @@ class ClientTest extends TestCase
         $m = $r->getMethod('filterResponse');
         $m->setAccessible(true);
 
-        $response = new Response();
-        $response->headers->setCookie($cookie1 = new Cookie('foo', 'bar', \DateTime::createFromFormat('j-M-Y H:i:s T', '15-Feb-2009 20:00:00 GMT')->format('U'), '/foo', 'http://example.com', true, true));
-        $domResponse = $m->invoke($client, $response);
-        $this->assertSame((string) $cookie1, $domResponse->getHeader('Set-Cookie'));
+        $expected = array(
+            'foo=bar; expires=Sun, 15-Feb-2009 20:00:00 GMT; max-age='.(strtotime('Sun, 15-Feb-2009 20:00:00 GMT') - time()).'; path=/foo; domain=http://example.com; secure; httponly',
+            'foo1=bar1; expires=Sun, 15-Feb-2009 20:00:00 GMT; max-age='.(strtotime('Sun, 15-Feb-2009 20:00:00 GMT') - time()).'; path=/foo; domain=http://example.com; secure; httponly',
+        );
 
         $response = new Response();
-        $response->headers->setCookie($cookie1 = new Cookie('foo', 'bar', \DateTime::createFromFormat('j-M-Y H:i:s T', '15-Feb-2009 20:00:00 GMT')->format('U'), '/foo', 'http://example.com', true, true));
-        $response->headers->setCookie($cookie2 = new Cookie('foo1', 'bar1', \DateTime::createFromFormat('j-M-Y H:i:s T', '15-Feb-2009 20:00:00 GMT')->format('U'), '/foo', 'http://example.com', true, true));
+        $response->headers->setCookie(new Cookie('foo', 'bar', \DateTime::createFromFormat('j-M-Y H:i:s T', '15-Feb-2009 20:00:00 GMT')->format('U'), '/foo', 'http://example.com', true, true));
         $domResponse = $m->invoke($client, $response);
-        $this->assertSame((string) $cookie1, $domResponse->getHeader('Set-Cookie'));
-        $this->assertSame([(string) $cookie1, (string) $cookie2], $domResponse->getHeader('Set-Cookie', false));
+        $this->assertEquals($expected[0], $domResponse->getHeader('Set-Cookie'));
+
+        $response = new Response();
+        $response->headers->setCookie(new Cookie('foo', 'bar', \DateTime::createFromFormat('j-M-Y H:i:s T', '15-Feb-2009 20:00:00 GMT')->format('U'), '/foo', 'http://example.com', true, true));
+        $response->headers->setCookie(new Cookie('foo1', 'bar1', \DateTime::createFromFormat('j-M-Y H:i:s T', '15-Feb-2009 20:00:00 GMT')->format('U'), '/foo', 'http://example.com', true, true));
+        $domResponse = $m->invoke($client, $response);
+        $this->assertEquals($expected[0], $domResponse->getHeader('Set-Cookie'));
+        $this->assertEquals($expected, $domResponse->getHeader('Set-Cookie', false));
     }
 
     public function testFilterResponseSupportsStreamedResponses()
@@ -92,21 +97,20 @@ class ClientTest extends TestCase
     public function testUploadedFile()
     {
         $source = tempnam(sys_get_temp_dir(), 'source');
-        file_put_contents($source, '1');
         $target = sys_get_temp_dir().'/sf.moved.file';
         @unlink($target);
 
         $kernel = new TestHttpKernel();
         $client = new Client($kernel);
 
-        $files = [
-            ['tmp_name' => $source, 'name' => 'original', 'type' => 'mime/original', 'size' => 1, 'error' => UPLOAD_ERR_OK],
-            new UploadedFile($source, 'original', 'mime/original', 1, UPLOAD_ERR_OK, true),
-        ];
+        $files = array(
+            array('tmp_name' => $source, 'name' => 'original', 'type' => 'mime/original', 'size' => 123, 'error' => UPLOAD_ERR_OK),
+            new UploadedFile($source, 'original', 'mime/original', 123, UPLOAD_ERR_OK, true),
+        );
 
         $file = null;
         foreach ($files as $file) {
-            $client->request('POST', '/', [], ['foo' => $file]);
+            $client->request('POST', '/', array(), array('foo' => $file));
 
             $files = $client->getRequest()->files->all();
 
@@ -116,11 +120,11 @@ class ClientTest extends TestCase
 
             $this->assertEquals('original', $file->getClientOriginalName());
             $this->assertEquals('mime/original', $file->getClientMimeType());
-            $this->assertSame(1, $file->getClientSize());
+            $this->assertEquals('123', $file->getClientSize());
             $this->assertTrue($file->isValid());
         }
 
-        $file->move(\dirname($target), basename($target));
+        $file->move(dirname($target), basename($target));
 
         $this->assertFileExists($target);
         unlink($target);
@@ -131,9 +135,9 @@ class ClientTest extends TestCase
         $kernel = new TestHttpKernel();
         $client = new Client($kernel);
 
-        $file = ['tmp_name' => '', 'name' => '', 'type' => '', 'size' => 0, 'error' => UPLOAD_ERR_NO_FILE];
+        $file = array('tmp_name' => '', 'name' => '', 'type' => '', 'size' => 0, 'error' => UPLOAD_ERR_NO_FILE);
 
-        $client->request('POST', '/', [], ['foo' => $file]);
+        $client->request('POST', '/', array(), array('foo' => $file));
 
         $files = $client->getRequest()->files->all();
 
@@ -150,8 +154,8 @@ class ClientTest extends TestCase
 
         $file = $this
             ->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
-            ->setConstructorArgs([$source, 'original', 'mime/original', 123, UPLOAD_ERR_OK, true])
-            ->setMethods(['getSize'])
+            ->setConstructorArgs(array($source, 'original', 'mime/original', 123, UPLOAD_ERR_OK, true))
+            ->setMethods(array('getSize'))
             ->getMock()
         ;
 
@@ -160,7 +164,7 @@ class ClientTest extends TestCase
             ->will($this->returnValue(INF))
         ;
 
-        $client->request('POST', '/', [], [$file]);
+        $client->request('POST', '/', array(), array($file));
 
         $files = $client->getRequest()->files->all();
 

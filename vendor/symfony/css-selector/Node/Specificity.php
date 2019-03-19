@@ -29,23 +29,51 @@ class Specificity
     const B_FACTOR = 10;
     const C_FACTOR = 1;
 
+    /**
+     * @var int
+     */
     private $a;
+
+    /**
+     * @var int
+     */
     private $b;
+
+    /**
+     * @var int
+     */
     private $c;
 
-    public function __construct(int $a, int $b, int $c)
+    /**
+     * Constructor.
+     *
+     * @param int $a
+     * @param int $b
+     * @param int $c
+     */
+    public function __construct($a, $b, $c)
     {
         $this->a = $a;
         $this->b = $b;
         $this->c = $c;
     }
 
-    public function plus(self $specificity): self
+    /**
+     * @param Specificity $specificity
+     *
+     * @return self
+     */
+    public function plus(Specificity $specificity)
     {
         return new self($this->a + $specificity->a, $this->b + $specificity->b, $this->c + $specificity->c);
     }
 
-    public function getValue(): int
+    /**
+     * Returns global specificity value.
+     *
+     * @return int
+     */
+    public function getValue()
     {
         return $this->a * self::A_FACTOR + $this->b * self::B_FACTOR + $this->c * self::C_FACTOR;
     }
@@ -54,9 +82,11 @@ class Specificity
      * Returns -1 if the object specificity is lower than the argument,
      * 0 if they are equal, and 1 if the argument is lower.
      *
+     * @param Specificity $specificity
+     *
      * @return int
      */
-    public function compareTo(self $specificity)
+    public function compareTo(Specificity $specificity)
     {
         if ($this->a !== $specificity->a) {
             return $this->a > $specificity->a ? 1 : -1;

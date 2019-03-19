@@ -593,8 +593,8 @@ class Connection implements ConnectionInterface
             // so we'll just ask the grammar for the format to get from the date.
             if ($value instanceof DateTimeInterface) {
                 $bindings[$key] = $value->format($grammar->getDateFormat());
-            } elseif (is_bool($value)) {
-                $bindings[$key] = (int) $value;
+            } elseif ($value === false) {
+                $bindings[$key] = 0;
             }
         }
 
@@ -892,13 +892,11 @@ class Connection implements ConnectionInterface
     public function getDoctrineConnection()
     {
         if (is_null($this->doctrineConnection)) {
-            $driver = $this->getDoctrineDriver();
+            $data = ['pdo' => $this->getPdo(), 'dbname' => $this->getConfig('database')];
 
-            $this->doctrineConnection = new DoctrineConnection([
-                'pdo' => $this->getPdo(),
-                'dbname' => $this->getConfig('database'),
-                'driver' => $driver->getName(),
-            ], $driver);
+            $this->doctrineConnection = new DoctrineConnection(
+                $data, $this->getDoctrineDriver()
+            );
         }
 
         return $this->doctrineConnection;

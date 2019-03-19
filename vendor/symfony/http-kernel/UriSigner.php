@@ -22,6 +22,8 @@ class UriSigner
     private $parameter;
 
     /**
+     * Constructor.
+     *
      * @param string $secret    A secret
      * @param string $parameter Query string parameter to use
      */
@@ -47,17 +49,20 @@ class UriSigner
         if (isset($url['query'])) {
             parse_str($url['query'], $params);
         } else {
-            $params = [];
+            $params = array();
         }
 
         $uri = $this->buildUrl($url, $params);
-        $params[$this->parameter] = $this->computeHash($uri);
 
-        return $this->buildUrl($url, $params);
+        return $uri.(false === strpos($uri, '?') ? '?' : '&').$this->parameter.'='.$this->computeHash($uri);
     }
 
     /**
      * Checks that a URI contains the correct hash.
+     *
+     * The query string parameter must be the last one
+     * (as it is generated that way by the sign() method, it should
+     * never be a problem).
      *
      * @param string $uri A signed URI
      *
@@ -69,14 +74,14 @@ class UriSigner
         if (isset($url['query'])) {
             parse_str($url['query'], $params);
         } else {
-            $params = [];
+            $params = array();
         }
 
         if (empty($params[$this->parameter])) {
             return false;
         }
 
-        $hash = $params[$this->parameter];
+        $hash = urlencode($params[$this->parameter]);
         unset($params[$this->parameter]);
 
         return $this->computeHash($this->buildUrl($url, $params)) === $hash;
@@ -84,10 +89,10 @@ class UriSigner
 
     private function computeHash($uri)
     {
-        return base64_encode(hash_hmac('sha256', $uri, $this->secret, true));
+        return urlencode(base64_encode(hash_hmac('sha256', $uri, $this->secret, true)));
     }
 
-    private function buildUrl(array $url, array $params = [])
+    private function buildUrl(array $url, array $params = array())
     {
         ksort($params, SORT_STRING);
         $url['query'] = http_build_query($params, '', '&');

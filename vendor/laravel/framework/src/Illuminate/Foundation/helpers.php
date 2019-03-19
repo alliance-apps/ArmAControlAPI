@@ -107,7 +107,9 @@ if (! function_exists('app')) {
             return Container::getInstance();
         }
 
-        return Container::getInstance()->make($abstract, $parameters);
+        return empty($parameters)
+            ? Container::getInstance()->make($abstract)
+            : Container::getInstance()->makeWith($abstract, $parameters);
     }
 }
 
@@ -149,9 +151,9 @@ if (! function_exists('auth')) {
     {
         if (is_null($guard)) {
             return app(AuthFactory::class);
+        } else {
+            return app(AuthFactory::class)->guard($guard);
         }
-
-        return app(AuthFactory::class)->guard($guard);
     }
 }
 
@@ -202,7 +204,7 @@ if (! function_exists('broadcast')) {
      * Begin broadcasting an event.
      *
      * @param  mixed|null  $event
-     * @return \Illuminate\Broadcasting\PendingBroadcast
+     * @return \Illuminate\Broadcasting\PendingBroadcast|void
      */
     function broadcast($event = null)
     {
@@ -217,7 +219,7 @@ if (! function_exists('cache')) {
      * If an array is passed, we'll assume you want to put to the cache.
      *
      * @param  dynamic  key|key,default|data,expiration|null
-     * @return mixed|\Illuminate\Cache\CacheManager
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -257,7 +259,7 @@ if (! function_exists('config')) {
      *
      * @param  array|string  $key
      * @param  mixed  $default
-     * @return mixed|\Illuminate\Config\Repository
+     * @return mixed
      */
     function config($key = null, $default = null)
     {
@@ -292,16 +294,14 @@ if (! function_exists('cookie')) {
      *
      * @param  string  $name
      * @param  string  $value
-     * @param  int  $minutes
+     * @param  int     $minutes
      * @param  string  $path
      * @param  string  $domain
-     * @param  bool  $secure
-     * @param  bool  $httpOnly
-     * @param  bool  $raw
-     * @param  string|null  $sameSite
-     * @return \Illuminate\Cookie\CookieJar|\Symfony\Component\HttpFoundation\Cookie
+     * @param  bool    $secure
+     * @param  bool    $httpOnly
+     * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = false, $httpOnly = true, $raw = false, $sameSite = null)
+    function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = false, $httpOnly = true)
     {
         $cookie = app(CookieFactory::class);
 
@@ -309,7 +309,7 @@ if (! function_exists('cookie')) {
             return $cookie;
         }
 
-        return $cookie->make($name, $value, $minutes, $path, $domain, $secure, $httpOnly, $raw, $sameSite);
+        return $cookie->make($name, $value, $minutes, $path, $domain, $secure, $httpOnly);
     }
 }
 
@@ -363,12 +363,11 @@ if (! function_exists('decrypt')) {
      * Decrypt the given value.
      *
      * @param  string  $value
-     * @param  bool   $unserialize
      * @return string
      */
-    function decrypt($value, $unserialize = true)
+    function decrypt($value)
     {
-        return app('encrypter')->decrypt($value, $unserialize);
+        return app('encrypter')->decrypt($value);
     }
 }
 
@@ -444,12 +443,11 @@ if (! function_exists('encrypt')) {
      * Encrypt the given value.
      *
      * @param  mixed  $value
-     * @param  bool   $serialize
      * @return string
      */
-    function encrypt($value, $serialize = true)
+    function encrypt($value)
     {
-        return app('encrypter')->encrypt($value, $serialize);
+        return app('encrypter')->encrypt($value);
     }
 }
 
@@ -485,9 +483,9 @@ if (! function_exists('factory')) {
             return $factory->of($arguments[0], $arguments[1])->times($arguments[2] ?? null);
         } elseif (isset($arguments[1])) {
             return $factory->of($arguments[0])->times($arguments[1]);
+        } else {
+            return $factory->of($arguments[0]);
         }
-
-        return $factory->of($arguments[0]);
     }
 }
 
@@ -559,12 +557,6 @@ if (! function_exists('mix')) {
         }
 
         if (file_exists(public_path($manifestDirectory.'/hot'))) {
-            $url = file_get_contents(public_path($manifestDirectory.'/hot'));
-
-            if (Str::startsWith($url, ['http://', 'https://'])) {
-                return new HtmlString(Str::after($url, ':').$path);
-            }
-
             return new HtmlString("//localhost:8080{$path}");
         }
 
@@ -780,9 +772,9 @@ if (! function_exists('route')) {
     /**
      * Generate the URL to a named route.
      *
-     * @param  array|string  $name
-     * @param  array  $parameters
-     * @param  bool  $absolute
+     * @param  string  $name
+     * @param  array   $parameters
+     * @param  bool    $absolute
      * @return string
      */
     function route($name, $parameters = [], $absolute = true)
@@ -826,7 +818,7 @@ if (! function_exists('session')) {
      *
      * @param  array|string  $key
      * @param  mixed  $default
-     * @return mixed|\Illuminate\Session\Store|\Illuminate\Session\SessionManager
+     * @return mixed
      */
     function session($key = null, $default = null)
     {
@@ -910,9 +902,9 @@ if (! function_exists('__')) {
      * @param  string  $key
      * @param  array  $replace
      * @param  string  $locale
-     * @return string|array|null
+     * @return \Illuminate\Contracts\Translation\Translator|string
      */
-    function __($key, $replace = [], $locale = null)
+    function __($key = null, $replace = [], $locale = null)
     {
         return app('translator')->getFromJson($key, $replace, $locale);
     }

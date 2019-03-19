@@ -28,7 +28,7 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  */
 abstract class DataCollector implements DataCollectorInterface, \Serializable
 {
-    protected $data = [];
+    protected $data = array();
 
     /**
      * @var ValueExporter
@@ -42,15 +42,12 @@ abstract class DataCollector implements DataCollectorInterface, \Serializable
 
     public function serialize()
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
-        $isCalledFromOverridingMethod = isset($trace[1]['function'], $trace[1]['object']) && 'serialize' === $trace[1]['function'] && $this === $trace[1]['object'];
-
-        return $isCalledFromOverridingMethod ? $this->data : serialize($this->data);
+        return serialize($this->data);
     }
 
     public function unserialize($data)
     {
-        $this->data = \is_array($data) ? $data : unserialize($data);
+        $this->data = unserialize($data);
     }
 
     /**
@@ -74,7 +71,7 @@ abstract class DataCollector implements DataCollectorInterface, \Serializable
                 $this->cloner->setMaxItems(-1);
                 $this->cloner->addCasters($this->getCasters());
             } else {
-                @trigger_error(sprintf('Using the %s() method without the VarDumper component is deprecated since Symfony 3.2 and won\'t be supported in 4.0. Install symfony/var-dumper version 3.2 or above.', __METHOD__), E_USER_DEPRECATED);
+                @trigger_error(sprintf('Using the %s() method without the VarDumper component is deprecated since version 3.2 and won\'t be supported in 4.0. Install symfony/var-dumper version 3.2 or above.', __METHOD__), E_USER_DEPRECATED);
                 $this->cloner = false;
             }
         }
@@ -100,7 +97,7 @@ abstract class DataCollector implements DataCollectorInterface, \Serializable
      */
     protected function varToString($var)
     {
-        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.2 and will be removed in 4.0. Use cloneVar() instead.', __METHOD__), E_USER_DEPRECATED);
+        @trigger_error(sprintf('The %s() method is deprecated since version 3.2 and will be removed in 4.0. Use cloneVar() instead.', __METHOD__), E_USER_DEPRECATED);
 
         if (null === $this->valueExporter) {
             $this->valueExporter = new ValueExporter();
@@ -114,11 +111,11 @@ abstract class DataCollector implements DataCollectorInterface, \Serializable
      */
     protected function getCasters()
     {
-        return [
+        return array(
             '*' => function ($v, array $a, Stub $s, $isNested) {
                 if (!$v instanceof Stub) {
                     foreach ($a as $k => $v) {
-                        if (\is_object($v) && !$v instanceof \DateTimeInterface && !$v instanceof Stub) {
+                        if (is_object($v) && !$v instanceof \DateTimeInterface && !$v instanceof Stub) {
                             $a[$k] = new CutStub($v);
                         }
                     }
@@ -126,6 +123,6 @@ abstract class DataCollector implements DataCollectorInterface, \Serializable
 
                 return $a;
             },
-        ];
+        );
     }
 }

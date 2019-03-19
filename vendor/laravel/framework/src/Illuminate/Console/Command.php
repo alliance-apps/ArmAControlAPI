@@ -2,7 +2,6 @@
 
 namespace Illuminate\Console;
 
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Support\Arrayable;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -16,8 +15,6 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class Command extends SymfonyCommand
 {
-    use Macroable;
-
     /**
      * The Laravel application instance.
      *
@@ -195,7 +192,7 @@ class Command extends SymfonyCommand
         $arguments['command'] = $command;
 
         return $this->getApplication()->find($command)->run(
-            $this->createInputFromArguments($arguments), $this->output
+            new ArrayInput($arguments), $this->output
         );
     }
 
@@ -211,23 +208,8 @@ class Command extends SymfonyCommand
         $arguments['command'] = $command;
 
         return $this->getApplication()->find($command)->run(
-            $this->createInputFromArguments($arguments), new NullOutput
+            new ArrayInput($arguments), new NullOutput
         );
-    }
-
-    /**
-     * Create an input instance from the given arguments.
-     *
-     * @param  array  $arguments
-     * @return \Symfony\Component\Console\Input\ArrayInput
-     */
-    protected function createInputFromArguments(array $arguments)
-    {
-        return tap(new ArrayInput($arguments), function ($input) {
-            if ($input->hasParameterOption(['--no-interaction'], true)) {
-                $input->setInteractive(false);
-            }
-        });
     }
 
     /**
@@ -396,11 +378,10 @@ class Command extends SymfonyCommand
      *
      * @param  array   $headers
      * @param  \Illuminate\Contracts\Support\Arrayable|array  $rows
-     * @param  string  $tableStyle
-     * @param  array   $columnStyles
+     * @param  string  $style
      * @return void
      */
-    public function table($headers, $rows, $tableStyle = 'default', array $columnStyles = [])
+    public function table($headers, $rows, $style = 'default')
     {
         $table = new Table($this->output);
 
@@ -408,13 +389,7 @@ class Command extends SymfonyCommand
             $rows = $rows->toArray();
         }
 
-        $table->setHeaders((array) $headers)->setRows($rows)->setStyle($tableStyle);
-
-        foreach ($columnStyles as $columnIndex => $columnStyle) {
-            $table->setColumnStyle($columnIndex, $columnStyle);
-        }
-
-        $table->render();
+        $table->setHeaders((array) $headers)->setRows($rows)->setStyle($style)->render();
     }
 
     /**
@@ -510,7 +485,7 @@ class Command extends SymfonyCommand
         $this->comment('*     '.$string.'     *');
         $this->comment(str_repeat('*', strlen($string) + 12));
 
-        $this->output->newLine();
+        $this->output->writeln('');
     }
 
     /**

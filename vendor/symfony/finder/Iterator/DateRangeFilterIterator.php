@@ -20,9 +20,11 @@ use Symfony\Component\Finder\Comparator\DateComparator;
  */
 class DateRangeFilterIterator extends FilterIterator
 {
-    private $comparators = [];
+    private $comparators = array();
 
     /**
+     * Constructor.
+     *
      * @param \Iterator        $iterator    The Iterator to filter
      * @param DateComparator[] $comparators An array of DateComparator instances
      */

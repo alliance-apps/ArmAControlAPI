@@ -27,13 +27,12 @@ class ViewController extends Controller
     /**
      * Invoke the controller method.
      *
-     * @param  array  $args
+     * @param  string  $view
+     * @param  array  $data
      * @return \Illuminate\Contracts\View\View
      */
-    public function __invoke(...$args)
+    public function __invoke($view, $data)
     {
-        list($view, $data) = array_slice($args, -2);
-
         return $this->view->make($view, $data);
     }
 }

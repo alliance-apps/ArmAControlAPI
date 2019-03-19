@@ -40,7 +40,7 @@ trait InteractsWithTime
     /**
      * If the given value is an interval, convert it to a DateTime instance.
      *
-     * @param  \DateTimeInterface|\DateInterval|int  $delay
+     * @param \DateTimeInterface|\DateInterval|int
      * @return \DateTimeInterface|int
      */
     protected function parseDateInterval($delay)

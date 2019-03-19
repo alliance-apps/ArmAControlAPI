@@ -19,9 +19,7 @@ class A extends B implements C, D {
 array(
     0: Stmt_Class(
         flags: 0
-        name: Identifier(
-            name: A
-        )
+        name: A
         extends: Name(
             parts: array(
                 0: B
@@ -44,17 +42,13 @@ array(
                 flags: 0
                 consts: array(
                     0: Const(
-                        name: Identifier(
-                            name: A
-                        )
+                        name: A
                         value: Scalar_String(
                             value: B
                         )
                     )
                     1: Const(
-                        name: Identifier(
-                            name: C
-                        )
+                        name: C
                         value: Scalar_String(
                             value: D
                         )
@@ -63,20 +57,15 @@ array(
             )
             1: Stmt_Property(
                 flags: MODIFIER_PUBLIC (1)
-                type: null
                 props: array(
                     0: Stmt_PropertyProperty(
-                        name: VarLikeIdentifier(
-                            name: a
-                        )
+                        name: a
                         default: Scalar_String(
                             value: b
                         )
                     )
                     1: Stmt_PropertyProperty(
-                        name: VarLikeIdentifier(
-                            name: c
-                        )
+                        name: c
                         default: Scalar_String(
                             value: d
                         )
@@ -85,24 +74,18 @@ array(
             )
             2: Stmt_Property(
                 flags: MODIFIER_PROTECTED (2)
-                type: null
                 props: array(
                     0: Stmt_PropertyProperty(
-                        name: VarLikeIdentifier(
-                            name: e
-                        )
+                        name: e
                         default: null
                     )
                 )
             )
             3: Stmt_Property(
                 flags: MODIFIER_PRIVATE (4)
-                type: null
                 props: array(
                     0: Stmt_PropertyProperty(
-                        name: VarLikeIdentifier(
-                            name: f
-                        )
+                        name: f
                         default: null
                     )
                 )
@@ -110,9 +93,7 @@ array(
             4: Stmt_ClassMethod(
                 flags: MODIFIER_PUBLIC (1)
                 byRef: false
-                name: Identifier(
-                    name: a
-                )
+                name: a
                 params: array(
                 )
                 returnType: null
@@ -122,17 +103,13 @@ array(
             5: Stmt_ClassMethod(
                 flags: MODIFIER_PUBLIC | MODIFIER_STATIC (9)
                 byRef: false
-                name: Identifier(
-                    name: b
-                )
+                name: b
                 params: array(
                     0: Param(
                         type: null
                         byRef: false
                         variadic: false
-                        var: Expr_Variable(
-                            name: a
-                        )
+                        name: a
                         default: null
                     )
                 )
@@ -143,9 +120,7 @@ array(
             6: Stmt_ClassMethod(
                 flags: MODIFIER_PUBLIC | MODIFIER_FINAL (33)
                 byRef: false
-                name: Identifier(
-                    name: c
-                )
+                name: c
                 params: array(
                 )
                 returnType: Name(
@@ -159,9 +134,7 @@ array(
             7: Stmt_ClassMethod(
                 flags: MODIFIER_PROTECTED (2)
                 byRef: false
-                name: Identifier(
-                    name: d
-                )
+                name: d
                 params: array(
                 )
                 returnType: null
@@ -171,9 +144,7 @@ array(
             8: Stmt_ClassMethod(
                 flags: MODIFIER_PRIVATE (4)
                 byRef: false
-                name: Identifier(
-                    name: e
-                )
+                name: e
                 params: array(
                 )
                 returnType: null

@@ -2,7 +2,6 @@
 
 namespace Illuminate\Database\Schema\Grammars;
 
-use RuntimeException;
 use Illuminate\Support\Fluent;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
@@ -41,7 +40,7 @@ class SQLiteGrammar extends Grammar
      */
     public function compileColumnListing($table)
     {
-        return 'pragma table_info('.$this->wrap(str_replace('.', '__', $table)).')';
+        return 'pragma table_info('.$this->wrapTable(str_replace('.', '__', $table)).')';
     }
 
     /**
@@ -173,18 +172,6 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Compile a spatial index key command.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @throws \RuntimeException
-     */
-    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
-    {
-        throw new RuntimeException('The database driver in use does not support spatial indexes.');
-    }
-
-    /**
      * Compile a foreign key command.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
@@ -245,9 +232,9 @@ class SQLiteGrammar extends Grammar
         );
 
         foreach ($command->columns as $name) {
-            $tableDiff->removedColumns[$name] = $connection->getDoctrineColumn(
-                $this->getTablePrefix().$blueprint->getTable(), $name
-            );
+            $column = $connection->getDoctrineColumn($blueprint->getTable(), $name);
+
+            $tableDiff->removedColumns[$name] = $column;
         }
 
         return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
@@ -279,18 +266,6 @@ class SQLiteGrammar extends Grammar
         $index = $this->wrap($command->index);
 
         return "drop index {$index}";
-    }
-
-    /**
-     * Compile a drop spatial index command.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @throws \RuntimeException
-     */
-    public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command)
-    {
-        throw new RuntimeException('The database driver in use does not support spatial indexes.');
     }
 
     /**
@@ -557,7 +532,7 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a date-time (with time zone) type.
+     * Create the column definition for a date-time type.
      *
      * Note: "SQLite does not have a storage class set aside for storing dates and/or times."
      * @link https://www.sqlite.org/datatype3.html
@@ -567,7 +542,7 @@ class SQLiteGrammar extends Grammar
      */
     protected function typeDateTimeTz(Fluent $column)
     {
-        return $this->typeDateTime($column);
+        return 'datetime';
     }
 
     /**
@@ -582,14 +557,14 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a time (with time zone) type.
+     * Create the column definition for a time type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
     protected function typeTimeTz(Fluent $column)
     {
-        return $this->typeTime($column);
+        return 'time';
     }
 
     /**
@@ -600,29 +575,26 @@ class SQLiteGrammar extends Grammar
      */
     protected function typeTimestamp(Fluent $column)
     {
-        return $column->useCurrent ? 'datetime default CURRENT_TIMESTAMP' : 'datetime';
+        if ($column->useCurrent) {
+            return 'datetime default CURRENT_TIMESTAMP';
+        }
+
+        return 'datetime';
     }
 
     /**
-     * Create the column definition for a timestamp (with time zone) type.
+     * Create the column definition for a timestamp type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
     protected function typeTimestampTz(Fluent $column)
     {
-        return $this->typeTimestamp($column);
-    }
+        if ($column->useCurrent) {
+            return 'datetime default CURRENT_TIMESTAMP';
+        }
 
-    /**
-     * Create the column definition for a year type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    protected function typeYear(Fluent $column)
-    {
-        return $this->typeInteger($column);
+        return 'datetime';
     }
 
     /**
@@ -670,7 +642,7 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a spatial Geometry type.
+     * Create the column definition for a geometry type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
@@ -681,7 +653,7 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a spatial Point type.
+     * Create the column definition for a point type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
@@ -692,18 +664,18 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a spatial LineString type.
+     * Create the column definition for a linestring type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
-    public function typeLineString(Fluent $column)
+    public function typeLinestring(Fluent $column)
     {
         return 'linestring';
     }
 
     /**
-     * Create the column definition for a spatial Polygon type.
+     * Create the column definition for a polygon type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
@@ -714,45 +686,45 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a spatial GeometryCollection type.
+     * Create the column definition for a geometrycollection type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
-    public function typeGeometryCollection(Fluent $column)
+    public function typeGeometrycollection(Fluent $column)
     {
         return 'geometrycollection';
     }
 
     /**
-     * Create the column definition for a spatial MultiPoint type.
+     * Create the column definition for a multipoint type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
-    public function typeMultiPoint(Fluent $column)
+    public function typeMultipoint(Fluent $column)
     {
         return 'multipoint';
     }
 
     /**
-     * Create the column definition for a spatial MultiLineString type.
+     * Create the column definition for a multilinestring type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
-    public function typeMultiLineString(Fluent $column)
+    public function typeMultilinestring(Fluent $column)
     {
         return 'multilinestring';
     }
 
     /**
-     * Create the column definition for a spatial MultiPolygon type.
+     * Create the column definition for a multipolygon type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
-    public function typeMultiPolygon(Fluent $column)
+    public function typeMultipolygon(Fluent $column)
     {
         return 'multipolygon';
     }

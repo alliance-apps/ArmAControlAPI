@@ -44,8 +44,8 @@ class QueryExecuted
      *
      * @param  string  $sql
      * @param  array  $bindings
-     * @param  float|null  $time
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  float  $time
+     * @param  string  $connection
      * @return void
      */
     public function __construct($sql, $bindings, $time, $connection)

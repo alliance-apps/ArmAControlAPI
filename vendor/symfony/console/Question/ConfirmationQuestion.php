@@ -21,6 +21,8 @@ class ConfirmationQuestion extends Question
     private $trueAnswerRegex;
 
     /**
+     * Constructor.
+     *
      * @param string $question        The question to ask to the user
      * @param bool   $default         The default answer to return, true or false
      * @param string $trueAnswerRegex A regex to match the "yes" answer
@@ -44,7 +46,7 @@ class ConfirmationQuestion extends Question
         $regex = $this->trueAnswerRegex;
 
         return function ($answer) use ($default, $regex) {
-            if (\is_bool($answer)) {
+            if (is_bool($answer)) {
                 return $answer;
             }
 
@@ -53,7 +55,7 @@ class ConfirmationQuestion extends Question
                 return $answer && $answerIsTrue;
             }
 
-            return '' === $answer || $answerIsTrue;
+            return !$answer || $answerIsTrue;
         };
     }
 }

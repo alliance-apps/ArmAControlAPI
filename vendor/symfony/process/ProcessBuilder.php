@@ -11,32 +11,32 @@
 
 namespace Symfony\Component\Process;
 
-@trigger_error(sprintf('The %s class is deprecated since Symfony 3.4 and will be removed in 4.0. Use the Process class instead.', ProcessBuilder::class), E_USER_DEPRECATED);
-
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 
 /**
- * @author Kris Wallsmith <kris@symfony.com>
+ * Process builder.
  *
- * @deprecated since version 3.4, to be removed in 4.0. Use the Process class instead.
+ * @author Kris Wallsmith <kris@symfony.com>
  */
 class ProcessBuilder
 {
     private $arguments;
     private $cwd;
-    private $env = [];
+    private $env = array();
     private $input;
     private $timeout = 60;
     private $options;
     private $inheritEnv = true;
-    private $prefix = [];
+    private $prefix = array();
     private $outputDisabled = false;
 
     /**
+     * Constructor.
+     *
      * @param string[] $arguments An array of arguments
      */
-    public function __construct(array $arguments = [])
+    public function __construct(array $arguments = array())
     {
         $this->arguments = $arguments;
     }
@@ -48,7 +48,7 @@ class ProcessBuilder
      *
      * @return static
      */
-    public static function create(array $arguments = [])
+    public static function create(array $arguments = array())
     {
         return new static($arguments);
     }
@@ -78,7 +78,7 @@ class ProcessBuilder
      */
     public function setPrefix($prefix)
     {
-        $this->prefix = \is_array($prefix) ? $prefix : [$prefix];
+        $this->prefix = is_array($prefix) ? $prefix : array($prefix);
 
         return $this;
     }
@@ -103,7 +103,7 @@ class ProcessBuilder
     /**
      * Sets the working directory.
      *
-     * @param string|null $cwd The working directory
+     * @param null|string $cwd The working directory
      *
      * @return $this
      */
@@ -120,9 +120,13 @@ class ProcessBuilder
      * @param bool $inheritEnv
      *
      * @return $this
+     *
+     * @deprecated since version 3.3, to be removed in 4.0.
      */
     public function inheritEnvironmentVariables($inheritEnv = true)
     {
+        @trigger_error(sprintf('The %s() method is deprecated since version 3.3 and will be removed in 4.0.', __METHOD__), E_USER_DEPRECATED);
+
         $this->inheritEnv = $inheritEnv;
 
         return $this;
@@ -135,7 +139,7 @@ class ProcessBuilder
      * defined environment variable.
      *
      * @param string      $name  The variable name
-     * @param string|null $value The variable value
+     * @param null|string $value The variable value
      *
      * @return $this
      */
@@ -167,7 +171,7 @@ class ProcessBuilder
     /**
      * Sets the input of the process.
      *
-     * @param resource|string|int|float|bool|\Traversable|null $input The input content
+     * @param resource|scalar|\Traversable|null $input The input content
      *
      * @return $this
      *
@@ -217,9 +221,13 @@ class ProcessBuilder
      * @param string $value The option value
      *
      * @return $this
+     *
+     * @deprecated since version 3.3, to be removed in 4.0.
      */
     public function setOption($name, $value)
     {
+        @trigger_error(sprintf('The %s() method is deprecated since version 3.3 and will be removed in 4.0.', __METHOD__), E_USER_DEPRECATED);
+
         $this->options[$name] = $value;
 
         return $this;
@@ -258,7 +266,7 @@ class ProcessBuilder
      */
     public function getProcess()
     {
-        if (0 === \count($this->prefix) && 0 === \count($this->arguments)) {
+        if (0 === count($this->prefix) && 0 === count($this->arguments)) {
             throw new LogicException('You must add() command arguments before calling getProcess().');
         }
 

@@ -4,7 +4,6 @@ namespace Illuminate\Database\Eloquent;
 
 use LogicException;
 use Illuminate\Support\Arr;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Queue\QueueableCollection;
 use Illuminate\Support\Collection as BaseCollection;
 
@@ -21,10 +20,6 @@ class Collection extends BaseCollection implements QueueableCollection
     {
         if ($key instanceof Model) {
             $key = $key->getKey();
-        }
-
-        if ($key instanceof Arrayable) {
-            $key = $key->toArray();
         }
 
         if (is_array($key)) {
@@ -53,7 +48,7 @@ class Collection extends BaseCollection implements QueueableCollection
                 $relations = func_get_args();
             }
 
-            $query = $this->first()->newQueryWithoutRelationships()->with($relations);
+            $query = $this->first()->newQuery()->with($relations);
 
             $this->items = $query->eagerLoadRelations($this->items);
         }
@@ -164,8 +159,7 @@ class Collection extends BaseCollection implements QueueableCollection
             ->getDictionary();
 
         return $this->map(function ($model) use ($freshModels) {
-            return $model->exists && isset($freshModels[$model->getKey()])
-                    ? $freshModels[$model->getKey()] : null;
+            return $model->exists ? $freshModels[$model->getKey()] : null;
         });
     }
 
@@ -368,18 +362,6 @@ class Collection extends BaseCollection implements QueueableCollection
     public function flip()
     {
         return $this->toBase()->flip();
-    }
-
-    /**
-     * Pad collection to the specified length with a value.
-     *
-     * @param  int  $size
-     * @param  mixed $value
-     * @return \Illuminate\Support\Collection
-     */
-    public function pad($size, $value)
-    {
-        return $this->toBase()->pad($size, $value);
     }
 
     /**

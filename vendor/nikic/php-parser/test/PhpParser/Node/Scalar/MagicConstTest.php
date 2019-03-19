@@ -1,9 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace PhpParser\Node\Scalar;
 
-class MagicConstTest extends \PHPUnit\Framework\TestCase
-{
+class MagicConstTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider provideTestGetName
      */
@@ -12,15 +11,15 @@ class MagicConstTest extends \PHPUnit\Framework\TestCase
     }
 
     public function provideTestGetName() {
-        return [
-            [new MagicConst\Class_, '__CLASS__'],
-            [new MagicConst\Dir, '__DIR__'],
-            [new MagicConst\File, '__FILE__'],
-            [new MagicConst\Function_, '__FUNCTION__'],
-            [new MagicConst\Line, '__LINE__'],
-            [new MagicConst\Method, '__METHOD__'],
-            [new MagicConst\Namespace_, '__NAMESPACE__'],
-            [new MagicConst\Trait_, '__TRAIT__'],
-        ];
+        return array(
+            array(new MagicConst\Class_, '__CLASS__'),
+            array(new MagicConst\Dir, '__DIR__'),
+            array(new MagicConst\File, '__FILE__'),
+            array(new MagicConst\Function_, '__FUNCTION__'),
+            array(new MagicConst\Line, '__LINE__'),
+            array(new MagicConst\Method, '__METHOD__'),
+            array(new MagicConst\Namespace_, '__NAMESPACE__'),
+            array(new MagicConst\Trait_, '__TRAIT__'),
+        );
     }
 }

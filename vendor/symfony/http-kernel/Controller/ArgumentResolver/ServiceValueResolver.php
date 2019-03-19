@@ -35,23 +35,7 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument)
     {
-        $controller = $request->attributes->get('_controller');
-
-        if (\is_array($controller) && \is_callable($controller, true) && \is_string($controller[0])) {
-            $controller = $controller[0].'::'.$controller[1];
-        } elseif (!\is_string($controller) || '' === $controller) {
-            return false;
-        }
-
-        if ('\\' === $controller[0]) {
-            $controller = ltrim($controller, '\\');
-        }
-
-        if (!$this->container->has($controller) && false !== $i = strrpos($controller, ':')) {
-            $controller = substr($controller, 0, $i).strtolower(substr($controller, $i));
-        }
-
-        return $this->container->has($controller) && $this->container->get($controller)->has($argument->getName());
+        return is_string($controller = $request->attributes->get('_controller')) && $this->container->has($controller) && $this->container->get($controller)->has($argument->getName());
     }
 
     /**
@@ -59,19 +43,6 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
-        if (\is_array($controller = $request->attributes->get('_controller'))) {
-            $controller = $controller[0].'::'.$controller[1];
-        }
-
-        if ('\\' === $controller[0]) {
-            $controller = ltrim($controller, '\\');
-        }
-
-        if (!$this->container->has($controller)) {
-            $i = strrpos($controller, ':');
-            $controller = substr($controller, 0, $i).strtolower(substr($controller, $i));
-        }
-
-        yield $this->container->get($controller)->get($argument->getName());
+        yield $this->container->get($request->attributes->get('_controller'))->get($argument->getName());
     }
 }

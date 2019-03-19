@@ -13,9 +13,9 @@ namespace Symfony\Component\HttpKernel\Tests\EventListener;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -29,6 +29,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
+ * DebugHandlersListenerTest.
+ *
  * @author Nicolas Grekas <p@tchwork.com>
  */
 class DebugHandlersListenerTest extends TestCase
@@ -40,11 +42,11 @@ class DebugHandlersListenerTest extends TestCase
         $listener = new DebugHandlersListener($userHandler, $logger);
         $xHandler = new ExceptionHandler();
         $eHandler = new ErrorHandler();
-        $eHandler->setExceptionHandler([$xHandler, 'handle']);
+        $eHandler->setExceptionHandler(array($xHandler, 'handle'));
 
         $exception = null;
-        set_error_handler([$eHandler, 'handleError']);
-        set_exception_handler([$eHandler, 'handleException']);
+        set_error_handler(array($eHandler, 'handleError'));
+        set_exception_handler(array($eHandler, 'handleException'));
         try {
             $listener->configure();
         } catch (\Exception $exception) {
@@ -58,10 +60,10 @@ class DebugHandlersListenerTest extends TestCase
 
         $this->assertSame($userHandler, $xHandler->setHandler('var_dump'));
 
-        $loggers = $eHandler->setLoggers([]);
+        $loggers = $eHandler->setLoggers(array());
 
         $this->assertArrayHasKey(E_DEPRECATED, $loggers);
-        $this->assertSame([$logger, LogLevel::INFO], $loggers[E_DEPRECATED]);
+        $this->assertSame(array($logger, LogLevel::INFO), $loggers[E_DEPRECATED]);
     }
 
     public function testConfigureForHttpKernelWithNoTerminateWithException()
@@ -75,7 +77,7 @@ class DebugHandlersListenerTest extends TestCase
         );
 
         $exception = null;
-        $h = set_exception_handler([$eHandler, 'handleException']);
+        $h = set_exception_handler(array($eHandler, 'handleException'));
         try {
             $listener->configure($event);
         } catch (\Exception $exception) {
@@ -101,16 +103,16 @@ class DebugHandlersListenerTest extends TestCase
 
         $dispatcher->addSubscriber($listener);
 
-        $xListeners = [
-            KernelEvents::REQUEST => [[$listener, 'configure']],
-            ConsoleEvents::COMMAND => [[$listener, 'configure']],
-        ];
+        $xListeners = array(
+            KernelEvents::REQUEST => array(array($listener, 'configure')),
+            ConsoleEvents::COMMAND => array(array($listener, 'configure')),
+        );
         $this->assertSame($xListeners, $dispatcher->getListeners());
 
         $exception = null;
         $eHandler = new ErrorHandler();
-        set_error_handler([$eHandler, 'handleError']);
-        set_exception_handler([$eHandler, 'handleException']);
+        set_error_handler(array($eHandler, 'handleError'));
+        set_exception_handler(array($eHandler, 'handleException'));
         try {
             $dispatcher->dispatch(ConsoleEvents::COMMAND, $event);
         } catch (\Exception $exception) {
@@ -129,27 +131,5 @@ class DebugHandlersListenerTest extends TestCase
             ->method('renderException');
 
         $xHandler(new \Exception());
-    }
-
-    public function testReplaceExistingExceptionHandler()
-    {
-        $userHandler = function () {};
-        $listener = new DebugHandlersListener($userHandler);
-        $eHandler = new ErrorHandler();
-        $eHandler->setExceptionHandler('var_dump');
-
-        $exception = null;
-        set_exception_handler([$eHandler, 'handleException']);
-        try {
-            $listener->configure();
-        } catch (\Exception $exception) {
-        }
-        restore_exception_handler();
-
-        if (null !== $exception) {
-            throw $exception;
-        }
-
-        $this->assertSame($userHandler, $eHandler->setExceptionHandler('var_dump'));
     }
 }

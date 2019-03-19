@@ -2,15 +2,7 @@
 
 namespace Illuminate\Http\Resources;
 
-class MissingValue implements PotentiallyMissing
+class MissingValue
 {
-    /**
-     * Determine if the object should be considered "missing".
-     *
-     * @return bool
-     */
-    public function isMissing()
-    {
-        return true;
-    }
+    //
 }

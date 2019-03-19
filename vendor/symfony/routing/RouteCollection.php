@@ -28,12 +28,12 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * @var Route[]
      */
-    private $routes = [];
+    private $routes = array();
 
     /**
      * @var array
      */
-    private $resources = [];
+    private $resources = array();
 
     public function __clone()
     {
@@ -63,7 +63,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
      */
     public function count()
     {
-        return \count($this->routes);
+        return count($this->routes);
     }
 
     /**
@@ -104,7 +104,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Removes a route or an array of routes by name from the collection.
      *
-     * @param string|string[] $name The route name or an array of route names
+     * @param string|array $name The route name or an array of route names
      */
     public function remove($name)
     {
@@ -116,8 +116,10 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Adds a route collection at the end of the current set by appending all
      * routes of the added collection.
+     *
+     * @param RouteCollection $collection A RouteCollection instance
      */
-    public function addCollection(self $collection)
+    public function addCollection(RouteCollection $collection)
     {
         // we need to remove all routes with the same names first because just replacing them
         // would not place the new route at the end of the merged array
@@ -126,9 +128,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
             $this->routes[$name] = $route;
         }
 
-        foreach ($collection->getResources() as $resource) {
-            $this->addResource($resource);
-        }
+        $this->resources = array_merge($this->resources, $collection->getResources());
     }
 
     /**
@@ -138,7 +138,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
      * @param array  $defaults     An array of default values
      * @param array  $requirements An array of requirements
      */
-    public function addPrefix($prefix, array $defaults = [], array $requirements = [])
+    public function addPrefix($prefix, array $defaults = array(), array $requirements = array())
     {
         $prefix = trim(trim($prefix), '/');
 
@@ -160,7 +160,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
      * @param array  $defaults     An array of default values
      * @param array  $requirements An array of requirements
      */
-    public function setHost($pattern, array $defaults = [], array $requirements = [])
+    public function setHost($pattern, array $defaults = array(), array $requirements = array())
     {
         foreach ($this->routes as $route) {
             $route->setHost($pattern);
@@ -234,7 +234,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Sets the schemes (e.g. 'https') all child routes are restricted to.
      *
-     * @param string|string[] $schemes The scheme or an array of schemes
+     * @param string|array $schemes The scheme or an array of schemes
      */
     public function setSchemes($schemes)
     {
@@ -246,7 +246,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Sets the HTTP methods (e.g. 'POST') all child routes are restricted to.
      *
-     * @param string|string[] $methods The method or an array of methods
+     * @param string|array $methods The method or an array of methods
      */
     public function setMethods($methods)
     {
@@ -262,19 +262,16 @@ class RouteCollection implements \IteratorAggregate, \Countable
      */
     public function getResources()
     {
-        return array_values($this->resources);
+        return array_unique($this->resources);
     }
 
     /**
-     * Adds a resource for this collection. If the resource already exists
-     * it is not added.
+     * Adds a resource for this collection.
+     *
+     * @param ResourceInterface $resource A resource instance
      */
     public function addResource(ResourceInterface $resource)
     {
-        $key = (string) $resource;
-
-        if (!isset($this->resources[$key])) {
-            $this->resources[$key] = $resource;
-        }
+        $this->resources[] = $resource;
     }
 }

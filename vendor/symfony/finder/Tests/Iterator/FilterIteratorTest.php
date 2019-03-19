@@ -13,8 +13,6 @@ namespace Symfony\Component\Finder\Tests\Iterator;
 
 /**
  * @author Alex Bogomazov
- *
- * @group legacy
  */
 class FilterIteratorTest extends RealIteratorTestCase
 {
@@ -23,7 +21,7 @@ class FilterIteratorTest extends RealIteratorTestCase
         $i = new \FilesystemIterator($this->toAbsolute());
 
         // it is expected that there are test.py test.php in the tmpDir
-        $i = $this->getMockForAbstractClass('Symfony\Component\Finder\Iterator\FilterIterator', [$i]);
+        $i = $this->getMockForAbstractClass('Symfony\Component\Finder\Iterator\FilterIterator', array($i));
         $i->expects($this->any())
             ->method('accept')
             ->will($this->returnCallback(function () use ($i) {
