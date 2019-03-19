@@ -50,6 +50,7 @@ Route::patch('vehicle/{vid}/edit', 'VehicleController@editVehicle');
 Route::patch('vehicle/{vid}/sidegarage', 'VehicleController@sideAndGarageChangeVehicle');
 Route::patch('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner');
 
+//Altis Life Gangs
 Route::get('gang/list', 'GangController@ganglist');
 Route::get('gang/{id}', 'GangController@gang');
 Route::delete('gang/{id}', 'GangController@deleteMember');
@@ -57,6 +58,16 @@ Route::put('gang/{id}', 'GangController@addMember');
 Route::patch('gang/{id}/owner', 'GangController@changeOwner');
 Route::patch('gang/{id}/name', 'GangController@changeName');
 Route::patch('gang/{id}/other', 'GangController@changeOther');
+
+//AllianceApps Gangsys
+Route::get('gang-aa/20190316', 'GangController@aaGangList');
+Route::get('gang-aa/20190316/{id}', 'GangController@aaGangSingle');
+Route::patch('gang-aa/20190316/{id}', 'GangController@aaChangeParams');
+Route::patch('gang-aa/20190316/member', 'GangController@aaEditMembers');
+
+
+
+
 
 Route::get('wanted/list', 'WantedController@wantedlist');
 Route::get('wanted/{pid}', 'WantedController@wantedlistForPlayer');
