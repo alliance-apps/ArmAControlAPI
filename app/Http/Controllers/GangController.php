@@ -284,7 +284,7 @@ class GangController extends Controller
       $gangs = DB::table('gangs')->where('id', $id)->get();
       $count = 0;
 
-      if($request->small === true)
+      if($request->small == "true")
       {
         foreach ($gangs as $gang)
         {
