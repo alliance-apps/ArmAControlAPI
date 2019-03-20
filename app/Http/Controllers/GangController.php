@@ -279,10 +279,39 @@ class GangController extends Controller
       return $output;
     }
 
-    public function aaGangSingle($id)
+    public function aaGangSingle($id, Request $request)
     {
       $gangs = DB::table('gangs')->where('id', $id)->get();
       $count = 0;
+
+      if($request->small === true)
+      {
+        foreach ($gangs as $gang)
+        {
+            $output[$count]['id'] = $gang->id;
+            $output[$count]['owner'] = $gang->owner;
+            $output[$count]['name'] = $gang->name;
+            $output[$count]['bank'] = $gang->bank;
+            $output[$count]['active'] = $gang->active;
+            $output[$count]['level'] = $gang->level;
+            $output[$count]['tag'] = $gang->tag;
+            $output[$count]['hq'] = $gang->hq;
+            $output[$count]['hq_upgrades'] = $gang->hq_upgrades;
+            $perm = str_replace('"', '', $gang->permission);
+            $perm = str_replace('`', '"', $perm);
+            $output[$count]['permission'] = json_decode($perm);
+            $output[$count]['tax'] = $gang->tax;
+            $output[$count]['type'] = $gang->type;
+            $output[$count]['insert_time'] = $gang->insert_time;
+
+            $count++;
+        }
+        if($count == 0) return [];
+        return $output[0];
+      }
+
+
+
       foreach ($gangs as $gang)
       {
           $output[$count]['id'] = $gang->id;
