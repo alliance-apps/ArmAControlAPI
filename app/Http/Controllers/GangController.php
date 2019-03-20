@@ -307,6 +307,7 @@ class GangController extends Controller
 
           $count++;
       }
+      if($count == 0) return [];
       return $output[0];
     }
 
