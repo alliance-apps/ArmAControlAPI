@@ -219,4 +219,20 @@ class VehicleController extends Controller
         ]);
         return $toLog;
     }
+    
+    public function getCustomFields(Request $request, $uid)
+    {
+        $players = DB::table('vehicles')->where('id', $uid)->take(1)->get();
+        
+        if(is_null($players)) abort(404);
+        $fields = explode(',', $request->fields);
+        foreach ($players as $p)
+        {
+            foreach ($fields as $field)
+            {
+                $output[$field] = $p->$field;
+            }
+        }
+        return $output;
+    }
 }
