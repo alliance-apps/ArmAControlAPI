@@ -39,6 +39,7 @@ Route::patch('player/{uid}/customfields', 'PlayerController@changeCustomFields')
 
 
 
+
 //Vehicle
 Route::get('vehicle/detail/{id}', 'VehicleController@detail');
 Route::get('vehicle/list', 'VehicleController@listAll');
@@ -49,6 +50,7 @@ Route::delete('vehicle/{vid}', 'VehicleController@deleteVehicle');
 Route::patch('vehicle/{vid}/edit', 'VehicleController@editVehicle');
 Route::patch('vehicle/{vid}/sidegarage', 'VehicleController@sideAndGarageChangeVehicle');
 Route::patch('vehicle/{vid}/changeowner', 'VehicleController@changeVehicleOwner');
+Route::get('vehicle/{uid}/customfields', 'VehicleController@getCustomFields');
 
 //Altis Life Gangs
 Route::get('gang/list', 'GangController@ganglist');
